@@ -1,0 +1,38 @@
+:root{--navy:#1B2556;--gold:#C9A24B;--gold2:#9A7A2E;--ivory:#F7F2E7;--ink:#1d1d22;--line:#e3dccb}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ivory);color:var(--ink);font:17px/1.75 "Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;padding-bottom:0}
+a{color:inherit;text-decoration:none}img{max-width:100%;height:auto;display:block}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+.top{background:#fff;border-top:6px solid var(--navy);border-bottom:1px solid var(--line);text-align:center;position:sticky;top:0;z-index:5}
+.logo{display:inline-block;color:var(--navy);padding:12px 0 0}
+.wm{font:700 30px/1 Georgia,"Times New Roman","Noto Serif KR",serif;letter-spacing:.02em}.wm small{font-size:.62em}
+.logo svg{display:block;width:100%;height:9px;margin-top:3px}
+.tag{margin:6px 0 8px;color:var(--gold2);font:500 13px/1.3 "Noto Serif KR",serif;letter-spacing:.04em}
+.tabs{display:flex;overflow-x:auto;background:var(--navy);scrollbar-width:none}
+.tabs a{flex:1 0 auto;padding:10px 14px;color:#e9e4d6;font-size:15px;white-space:nowrap;border-bottom:3px solid transparent}
+.tabs a.on,.tabs a:hover{color:#fff;border-color:var(--gold)}
+main{padding:18px 16px 40px}
+.sh{font:700 19px/1.3 "Noto Serif KR",serif;color:var(--navy);border-top:2px solid var(--navy);padding-top:10px;margin:30px 0 12px}
+.sh:after{content:"";display:block;width:36px;height:3px;background:var(--gold);margin-top:8px}
+.grid{display:grid;gap:12px}
+.card a{display:block;background:#fff;border:1px solid var(--line);border-radius:6px;padding:14px 16px;font-size:13px;color:#6b6656}
+.card h3{font-size:17px;line-height:1.45;color:var(--ink);margin:6px 0 4px}.card p{margin:0 0 8px;font-size:14px;color:#555}
+.card.big a{border-top:4px solid var(--gold);padding:20px}.card.big h2{font:700 24px/1.4 "Noto Serif KR",serif;color:var(--navy);margin:8px 0}
+.card.big p{font-size:15px}
+.lab{display:inline-block;font-size:12px;font-weight:700;color:var(--navy);border:1px solid var(--navy);padding:1px 8px;border-radius:20px}
+.lab.col{background:var(--navy);color:var(--gold);border-color:var(--navy)}
+.colband{display:grid;grid-template-columns:110px 1fr;gap:14px;align-items:center;margin:26px 0;background:var(--navy);color:#fff;border-radius:6px;overflow:hidden;border:2px solid var(--gold)}
+.colband img{height:100%;object-fit:cover}.colband span{padding:12px 12px 12px 0;font-size:15px;line-height:1.5}
+.colband b{display:block;color:var(--gold);font-family:"Noto Serif KR",serif;font-size:13px}.colband small{display:block;color:#bfb9a6;margin-top:4px}
+.post{background:#fff;border:1px solid var(--line);border-radius:6px;padding:20px 18px}
+.post h1{font:700 26px/1.4 "Noto Serif KR",serif;color:var(--navy);margin:10px 0 6px}
+.sub{color:#555;font-size:17px;margin:0 0 10px;border-left:3px solid var(--gold);padding-left:10px}
+.meta{font-size:13px;color:#777;border-bottom:1px solid var(--line);padding-bottom:12px}
+.body h2,.body h3{font:700 20px/1.4 "Noto Serif KR",serif;color:var(--navy);margin:28px 0 8px}
+.body blockquote{margin:16px 0;padding:8px 14px;border-left:3px solid var(--gold);background:var(--ivory)}
+.colhead{width:100%;border-radius:4px;margin-bottom:14px}.intro{color:#555}
+.pn,.share{display:flex;justify-content:space-between;font-size:14px;color:var(--navy);margin-top:18px}
+.empty{color:#888}
+.foot{background:var(--navy);color:#d9d4c4;font-size:13px;line-height:1.7;padding:26px 0 30px;text-align:center}
+.foot a{color:var(--gold)}.foot b{color:#fff}.foot .seal{width:72px;margin:0 auto 10px}.foot p{margin:4px 0}.copy{color:#9a96a8}
+@media(min-width:760px){.grid{grid-template-columns:repeat(3,1fr)}.wm{font-size:44px}.tabs{justify-content:center}.tabs a{flex:0 0 auto}.colband{grid-template-columns:220px 1fr}.post{padding:36px 48px}.post h1{font-size:32px}}
