@@ -94,8 +94,9 @@ FOOTER = f"""<footer class="foot">
 <p class="fname">제호 <b>뉴스더힐</b> · 인터넷신문 등록번호 <b>서울 아 56252</b> · 등록일 2025.11.24</p>
 <p>발행인·편집인 최만수 · <b>청소년보호책임자 최만수</b></p>
 <p>Tel 02-6951-5540 · Fax 070-4009-3314 · <a href="mailto:info@newsthehill.com">info@newsthehill.com</a></p>
-<p>서울시 송파구 위례광장로 199, 성희트리차 501-30호<br>경기도 성남시 수정구 위례대로 83 밀리토피아호텔 B1, 21호</p>
-<!-- TODO(교수님 확인): 최초 발행일(발행연월일) 표기 추가. 등록증상 발행소 주소가 위 두 곳 중 어디인지 확인. -->
+<p>발행소 서울 송파구 위례광장로 199 성희트리차 501-30호</p>
+<p>사무실 경기도 성남시 수정구 위례대로 83 밀리토피아호텔 B1, 21호</p>
+<!-- TODO(교수님 확인): 최초 발행일(발행연월일) 표기 추가. -->
 <p class="links"><a href="/about/">회사소개</a> · <a href="/policy/terms/">이용약관</a> · <a href="/policy/privacy/">개인정보처리방침</a> · <a href="/policy/youth/">청소년보호정책</a> · <a href="/rss.xml">RSS</a></p>
 <p class="copy">© {datetime.now().year} 뉴스더힐. 무단 전재·재배포 금지.</p>
 </div></footer>"""
