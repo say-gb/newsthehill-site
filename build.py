@@ -1,12 +1,18 @@
 #!/usr/bin/env python3
-"""뉴스더힐 정적 사이트 생성기. 사용: python3 build.py  → dist/ 생성"""
+"""뉴스더힐 정적 사이트 생성기.
+사용: python3 build.py  → dist/ 생성 (newsthehill.com 루트용, CNAME 포함)
+미리보기: BASE_PATH=/newsthehill-site/ OUT_DIR=../upload python3 build.py  (하위경로, CNAME 제외)"""
 import re, html, shutil, json
 from pathlib import Path
 from datetime import datetime
 from email.utils import format_datetime
 
+import os
 ROOT = Path(__file__).parent
-DIST = ROOT / "dist"
+DIST = Path(os.environ.get("OUT_DIR", ROOT / "dist"))
+BASE = "/" + os.environ.get("BASE_PATH", "/").strip("/") + "/"
+BASE = "/" if BASE == "//" else BASE  # 예: BASE_PATH=/newsthehill-site/
+NO_CNAME = os.environ.get("NO_CNAME") == "1" or BASE != "/"
 SITE = "https://newsthehill.com"
 NAME = "뉴스더힐"
 TAGLINE = "높은 시선으로 세상을, 깊은 취재로 진실을"
@@ -121,12 +127,14 @@ def card(a, big=False):
 
 def write(path, s):
     p = DIST / path.lstrip("/"); p = p / "index.html" if not p.suffix else p
+    if BASE != "/":  # 내부 링크·자산에 BASE 접두어 (canonical/OG는 절대주소라 영향 없음)
+        s = re.sub(r'((?:href|src)=")/(?!/)', lambda m: m.group(1) + BASE, s)
     p.parent.mkdir(parents=True, exist_ok=True); p.write_text(s, encoding="utf-8")
 
 def build():
     if DIST.exists(): shutil.rmtree(DIST)
     shutil.copytree(ROOT / "static", DIST / "static")
-    for f in ("CNAME", "robots.txt"): shutil.copy(ROOT / f, DIST / f)
+    for f in ("robots.txt",) + (() if NO_CNAME else ("CNAME",)): shutil.copy(ROOT / f, DIST / f)
     shutil.copy(ROOT / "static/favicon.ico", DIST / "favicon.ico")
     arts = load()
     # 메인
