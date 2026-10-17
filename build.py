@@ -56,7 +56,9 @@ def md(text):
         if lst: flush()
         para.append(l)
     flush()
-    return "\n".join(out)
+    h = "\n".join(out)
+    h = re.sub(r'</figure>\n<p><em>(.*?)</em></p>', r'<figcaption>\1</figcaption></figure>', h)
+    return h
 
 def load():
     arts = []
@@ -75,58 +77,132 @@ def load():
         meta["url"] = f"/articles/{meta['slug']}/"
         meta["column"] = meta.get("column", "").lower() == "true" or meta["section"] == "column"
         arts.append(meta)
-    arts.sort(key=lambda a: (a["dt"], a["slug"]), reverse=True)
+    arts.sort(key=lambda a: (a["dt"], a.get("time", ""), a["slug"]), reverse=True)
     return arts
 
-LOGO = """<a class="logo" href="/" aria-label="뉴스더힐 홈">
-<span class="wm">NEWS <small>THE</small> HILL</span>
-<svg viewBox="0 0 300 18" preserveAspectRatio="none" aria-hidden="true"><path d="M0 17 C40 15 60 9 95 8 C120 7 130 2 150 2 C175 2 190 8 215 9 C250 10 270 15 300 17 Z" fill="currentColor"/></svg>
-</a>"""
+WEEK = "월화수목금토일"
+COLUMNISTS = [  # (이름, 연재명, 저자 문자열, 사진)
+    ("최경집", "최경집 교수의 시선", "최경집", "/static/old/kj-2026101200001-0.png"),
+    ("박현", "박현 손해사정사의 정당한 보험금 리포트", "박현 손해사정사", "/static/old/hyun-2026101500001-0.png"),
+    ("백효연", "단지팀장의 보험칼럼", "단지팀장(백효연)", "/static/old/danji-2026100600003-0.png"),
+]
+EMAIL = "info@newsthehill.com"
 
-SEAL = """<svg class="seal" viewBox="0 0 120 120" aria-label="NEWS THE HILL PRESS"><defs><path id="ta" d="M20 60 A40 40 0 0 1 100 60"/><path id="tb" d="M18 62 A42 42 0 0 0 102 62"/></defs>
-<circle cx="60" cy="60" r="57" fill="#1B2556" stroke="#C9A24B" stroke-width="3"/><circle cx="60" cy="60" r="50" fill="none" stroke="#C9A24B" stroke-width="1"/>
-<text font-family="Georgia,serif" font-size="13" fill="#C9A24B" letter-spacing="1"><textPath href="#ta" startOffset="50%" text-anchor="middle">NEWS THE HILL</textPath></text>
-<text font-family="Georgia,serif" font-size="13" fill="#C9A24B" letter-spacing="3"><textPath href="#tb" startOffset="50%" text-anchor="middle" side="right">PRESS</textPath></text>
-<path d="M28 68 C42 66 48 58 60 57 C72 58 78 66 92 68 Z" fill="#C9A24B"/></svg>"""
+def d(a): return f"{a['dt']:%Y.%m.%d}"
+def dt(a): return f"{a['dt']:%Y.%m.%d}" + (f" {a['time']}" if a.get("time") else "")
+def hm(a): return f"{a['dt']:%m.%d}" + (f"<b>{a['time']}</b>" if a.get("time") else "")
+def secname(a): return SECTIONS[a["section"]]
+def clean(t): return re.sub(r"^\[[^\]]+\]\s*", "", t)
 
-# 법정 표시사항(신문법). 휴대전화 번호는 게시하지 않음.
+def today():
+    n = datetime.now(); return f"{n.year}년 {n.month}월 {n.day}일({WEEK[n.weekday()]})"
+
+LOGO = """<a class="logo" href="/" aria-label="뉴스더힐 홈"><b>뉴스더힐</b><small>NEWS THE HILL</small></a>"""
+
+def header(active, arts):
+    menu = "".join(f'<a href="/section/{k}/"{" class=on" if k == active else ""}>{v}</a>' for k, v in SECTIONS.items())
+    tick = "".join(f'<li><a href="{a["url"]}">{esc(a["title"])}</a></li>' for a in arts[:6])
+    return f"""<header class="hd">
+<div class="mast"><div class="wrap">
+<p class="date"><span id="today">{today()}</span><span id="wx" class="wx"></span></p>
+{LOGO}
+<div class="tools"><form class="srch" action="https://www.google.com/search" role="search"><input type="hidden" name="as_sitesearch" value="newsthehill.com"><input name="q" placeholder="기사 검색" aria-label="검색어"><button aria-label="검색"><svg viewBox="0 0 20 20" width="16" height="16"><circle cx="8.5" cy="8.5" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M13 13l5 5" stroke="currentColor" stroke-width="2"/></svg></button></form>
+<button class="ham" type="button" aria-label="전체메뉴"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M2 5h16M2 10h16M2 15h16" stroke="currentColor" stroke-width="2"/></svg></button></div>
+</div></div>
+<nav class="gnb" aria-label="주메뉴"><div class="wrap">{menu}</div></nav>
+<div class="ticker"><div class="wrap"><b>최신</b><ul id="tick">{tick}</ul></div></div>
+</header>"""
+
 FOOTER = f"""<footer class="foot">
-<div class="wrap">
-{SEAL}
-<p class="fname">제호 <b>뉴스더힐</b> · 인터넷신문 등록번호 <b>서울 아 56252</b> · 등록일 2025.11.24</p>
-<p>발행인·편집인 최만수 · <b>청소년보호책임자 최만수</b></p>
-<p>Tel 02-6951-5540 · Fax 070-4009-3314 · <a href="mailto:info@newsthehill.com">info@newsthehill.com</a></p>
-<p>발행소 서울 송파구 위례광장로 199 성희트리차 501-30호</p>
-<p>사무실 경기도 성남시 수정구 위례대로 83 밀리토피아호텔 B1, 21호</p>
-<!-- TODO(교수님 확인): 최초 발행일(발행연월일) 표기 추가. -->
-<p class="links"><a href="/about/">회사소개</a> · <a href="/policy/terms/">이용약관</a> · <a href="/policy/privacy/">개인정보처리방침</a> · <a href="/policy/youth/">청소년보호정책</a> · <a href="/rss.xml">RSS</a></p>
-<p class="copy">© {datetime.now().year} 뉴스더힐. 무단 전재·재배포 금지.</p>
-</div></footer>"""
+<div class="fmenu"><div class="wrap"><a href="/about/">회사소개</a><a href="/policy/terms/">이용약관</a><a href="/policy/privacy/"><b>개인정보처리방침</b></a><a href="/policy/youth/">청소년보호정책</a><a href="mailto:{EMAIL}?subject=%EA%B8%B0%EC%82%AC%EC%A0%9C%EB%B3%B4">기사제보</a><a href="mailto:{EMAIL}?subject=%EA%B4%91%EA%B3%A0%EB%AC%B8%EC%9D%98">광고문의</a><a href="/rss.xml">RSS</a></div></div>
+<div class="wrap finfo"><div class="flogo"><b>뉴스더힐</b><small>NEWS THE HILL</small></div>
+<table><tbody>
+<tr><th>제호</th><td>뉴스더힐</td><th>등록번호</th><td>서울 아 56252</td><th>등록일</th><td>2025.11.24</td></tr>
+<tr><th>발행인·편집인</th><td>최만수</td><th>청소년보호책임자</th><td>최만수</td><th>최초 발행일</th><td><!-- TODO(교수님 확인) -->확인 중</td></tr>
+<tr><th>발행소</th><td colspan="5">서울 송파구 위례광장로 199 성희트리차 501-30호 <span class="sep">|</span> 사무실 경기도 성남시 수정구 위례대로 83 밀리토피아호텔 B1, 21호</td></tr>
+<tr><th>대표전화</th><td>02-6951-5540</td><th>팩스</th><td>070-4009-3314</td><th>이메일</th><td><a href="mailto:{EMAIL}">{EMAIL}</a></td></tr>
+</tbody></table>
+<p class="copy">뉴스더힐의 모든 콘텐츠(기사)는 저작권법의 보호를 받으며, 무단 전재·복사·배포 등을 금합니다. Copyright © {datetime.now().year} 뉴스더힐. All rights reserved.</p></div>
+</footer>"""
 
-def tabs(active=""):
-    return '<nav class="tabs" aria-label="섹션">' + "".join(
-        f'<a href="/section/{k}/"{" class=on" if k == active else ""}>{v}</a>' for k, v in SECTIONS.items()) + "</nav>"
+SCRIPT = """<script>
+(function(){var u=document.getElementById('tick');if(u&&u.children.length>1){var i=0;setInterval(function(){i=(i+1)%u.children.length;u.style.transform='translateY(-'+(i*30)+'px)'},4000)}
+var W=['일','월','화','수','목','금','토'],n=new Date(),t=document.getElementById('today');if(t)t.textContent=n.getFullYear()+'년 '+(n.getMonth()+1)+'월 '+n.getDate()+'일('+W[n.getDay()]+')';
+var C={0:'맑음',1:'대체로 맑음',2:'구름 조금',3:'흐림',45:'안개',48:'안개',51:'이슬비',53:'이슬비',55:'이슬비',61:'비',63:'비',65:'강한 비',71:'눈',73:'눈',75:'많은 눈',80:'소나기',81:'소나기',82:'강한 소나기',95:'뇌우'};
+fetch('https://api.open-meteo.com/v1/forecast?latitude=37.48&longitude=127.14&current=temperature_2m,weather_code&timezone=Asia%2FSeoul').then(function(r){return r.json()}).then(function(j){var c=j.current;document.getElementById('wx').textContent='송파 '+(C[c.weather_code]||'')+' '+Math.round(c.temperature_2m)+'℃'}).catch(function(){});
+document.querySelectorAll('.fs button').forEach(function(b){b.onclick=function(){var x=document.querySelector('.body');var s=parseFloat(getComputedStyle(x).fontSize)+(b.dataset.d==='+'?1:-1);x.style.fontSize=Math.max(14,Math.min(24,s))+'px'}});
+var f=document.querySelector('.srch');if(f)f.addEventListener('submit',function(e){var i=f.querySelector('input[name=q]');if(getComputedStyle(i).display==='none'||!i.value){e.preventDefault();f.classList.add('open');i.focus()}});
+var h=document.querySelector('.ham');if(h)h.onclick=function(){document.documentElement.classList.toggle('menu-open')};})();
+</script><script src="/static/js/blankfill.js" data-banners="/static/banners/banners.json" defer></script>"""
 
-def page(title, body, desc=TAGLINE, url="/", image="/static/og-default.jpg", active="", ogtype="website"):
-    full = f"{title} | {NAME}" if title else f"{NAME} — {TAGLINE}"
+def page(title, body, desc=TAGLINE, url="/", image="/static/og-default.jpg", active="", ogtype="website", arts=(), keywords=""):
+    full = f"{title} - {NAME}" if title else f"{NAME} - {TAGLINE}"
     return f"""<!doctype html><html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{esc(full)}</title><meta name="description" content="{esc(desc)}">
+<title>{esc(full)}</title><meta name="description" content="{esc(desc)}">{f'<meta name="keywords" content="{esc(keywords)}">' if keywords else ''}
 <link rel="canonical" href="{SITE}{url}"><link rel="icon" href="/favicon.ico" sizes="32x32"><link rel="icon" type="image/png" href="/static/favicon.png"><link rel="apple-touch-icon" href="/static/favicon.png">
 <meta property="og:site_name" content="{NAME}"><meta property="og:type" content="{ogtype}"><meta property="og:title" content="{esc(title or NAME)}">
 <meta property="og:description" content="{esc(desc)}"><meta property="og:url" content="{SITE}{url}"><meta property="og:image" content="{SITE}{image}"><meta property="og:locale" content="ko_KR">
-<meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#1B2556">
+<meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#0E362A">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;900&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
 <link rel="alternate" type="application/rss+xml" title="{NAME}" href="/rss.xml"><link rel="stylesheet" href="/static/style.css">
 </head><body>
-<header class="top"><div class="wrap">{LOGO}<p class="tag">{TAGLINE}</p></div>{tabs(active)}</header>
+{header(active, arts)}
 <main class="wrap">{body}</main>
 {FOOTER}
+{SCRIPT}
 </body></html>"""
 
-def card(a, big=False):
-    lab = '<span class="lab col">최경집 교수의 시선</span>' if a["column"] else f'<span class="lab">{SECTIONS[a["section"]]}</span>'
-    return f"""<article class="card{' big' if big else ''}"><a href="{a['url']}">{lab}<h{2 if big else 3}>{esc(a['title'])}</h{2 if big else 3}>
-<p>{esc(a['excerpt'] if big else a.get('subtitle',''))}</p><time datetime="{a['dt']:%Y-%m-%d}">{a['dt']:%Y.%m.%d}</time> · {esc(a['author'])}</a></article>"""
+def thumb(a, cls="th"):
+    t = a.get("thumb")
+    return f'<span class="{cls}"><img src="{esc(t)}" alt="" loading="lazy"></span>' if t else ""
+
+def meta_line(a):
+    return f'<em class="m">{esc(a["author"])}<i>|</i>{dt(a)}</em>'
+
+def row(a, ex=True):  # 썸네일 + 제목 + 요약 + 기자·시각
+    return f"""<li class="row{' nothumb' if not a.get('thumb') else ''}"><a href="{a['url']}">{thumb(a)}<strong>{esc(a['title'])}</strong>
+{f'<p>{esc(a["excerpt"])}</p>' if ex else ''}{meta_line(a)}</a></li>"""
+
+def tline(a):
+    return f'<li><a href="{a["url"]}">{esc(a["title"])}</a></li>'
+
+def timeline(a):  # "15:05 제목"
+    return f'<li><time>{hm(a)}</time><a href="{a["url"]}">{esc(a["title"])}</a></li>'
+
+def boxh(t, href="", tag="h2"):
+    more = f'<a class="more" href="{href}">더보기</a>' if href else ""
+    return f'<{tag} class="bh"><span>{t}</span>{more}</{tag}>'
+
+ADSLOT = '<div class="adslot" data-bf-slot="300x250" aria-label="광고 영역"></div>'
+
+def rank(arts, cur=None, n=10, skip=8):
+    pool = [a for a in arts[skip:] if a is not cur]
+    top = [a for a in pool if not a["column"]][:n//2]; top += [a for a in pool if a["column"]][:n - len(top)]
+    top.sort(key=lambda a: (a["dt"], a.get("time", "")), reverse=True)
+    return f'<section class="rankbox">{boxh("주요 뉴스")}<ol class="rank">' + "".join(f'<li><b>{i+1}</b><a href="{a["url"]}">{esc(a["title"])}</a></li>' for i, a in enumerate(top)) + "</ol></section>"
+
+def columnists(arts):
+    cb = ""
+    for name, series, author, ph in COLUMNISTS:
+        last = next((a for a in arts if a["author"] == author), None)
+        if not last: continue
+        cb += f'<li><a href="{last["url"]}"><span class="cph"><img src="{ph}" alt="{esc(name)}" loading="lazy"></span><b>{esc(series)}</b><span class="ct">{esc(clean(last["title"]))}</span></a></li>'
+    return f'<section class="cbox">{boxh("칼럼니스트", "/section/column/")}<ul>{cb}</ul></section>'
+
+def sidebar(arts, cur=None):
+    return f'<aside class="side">{rank(arts, cur)}{ADSLOT}{columnists(arts)}</aside>'
+
+def colbox(arts):  # 「최경집 교수의 시선」 아이보리 박스
+    c = next((a for a in arts if a["author"] == "최경집"), None)
+    if not c: return ""
+    first = re.sub(r"<[^>]+>", "", c["html"]).strip().split("\n")[0][:120]
+    others = [a for a in arts if a["author"] == "최경집" and a is not c][:3]
+    return f"""<section class="sisun"><a class="sface" href="{c['url']}"><img src="{COLUMNISTS[0][3]}" alt="최경집 교수"></a>
+<div class="stx"><p class="slab">최경집 교수의 시선</p><a href="{c['url']}"><strong>{esc(clean(c['title']))}</strong><p>{esc(first)}…</p></a><em class="m">최경집 식품마케팅 교수<i>|</i>{dt(c)}</em></div>
+<ul class="smore">{''.join(f'<li><a href="{a["url"]}">{esc(clean(a["title"]))}</a><time>{a["dt"]:%m.%d}</time></li>' for a in others)}</ul></section>"""
 
 def write(path, s):
     p = DIST / path.lstrip("/"); p = p / "index.html" if not p.suffix else p
@@ -134,60 +210,111 @@ def write(path, s):
         s = re.sub(r'((?:href|src)=")/(?!/)', lambda m: m.group(1) + BASE, s)
     p.parent.mkdir(parents=True, exist_ok=True); p.write_text(s, encoding="utf-8")
 
+def make_thumbs(arts):
+    """본문 첫 사진을 360px 썸네일로 (PIL 있으면). 칼럼은 연재 이미지, 없으면 칼럼 헤더."""
+    try:
+        from PIL import Image
+    except ImportError:
+        Image = None
+    tdir = DIST / "static/thumb"; tdir.mkdir(parents=True, exist_ok=True)
+    for a in arts:
+        m = re.search(r'<img src="(/static/[^"]+)"', a["html"])
+        src = m.group(1) if m else (COLUMN_HEADER if a["column"] else None)
+        if not src: continue
+        a["photo"] = src
+        if Image is None: a["thumb"] = src; continue
+        p = ROOT / src.lstrip("/"); out = tdir / (Path(src).stem + ".jpg")
+        if not out.exists():
+            im = Image.open(p).convert("RGB"); im.thumbnail((480, 480)); im.save(out, quality=80)
+        a["thumb"] = "/static/thumb/" + out.name
+
+FACES = {"kj": (0.50, 0.04, 0.96, 0.62), "hyun": (0.57, 0.10, 0.89, 0.50), "danji": (0.62, 0.06, 0.92, 0.56)}  # 연재 이미지에서 얼굴 부분(비율)
+def make_faces():
+    from PIL import Image
+    out = {}
+    for i, (name, series, author, ph) in enumerate(COLUMNISTS):
+        key = Path(ph).stem.split("-")[0]; box = FACES.get(key)
+        if not box: continue
+        im = Image.open(ROOT / ph.lstrip("/")).convert("RGB"); w, h = im.size
+        c = im.crop((int(box[0]*w), int(box[1]*h), int(box[2]*w), int(box[3]*h)))
+        s = min(c.size); c = c.crop(((c.size[0]-s)//2, 0, (c.size[0]-s)//2 + s, s)).resize((160, 160))
+        p = DIST / "static/thumb" / f"face-{key}.jpg"; p.parent.mkdir(parents=True, exist_ok=True); c.save(p, quality=85)
+        COLUMNISTS[i] = (name, series, author, f"/static/thumb/face-{key}.jpg")
+
+def kw(a):
+    t = re.sub(r"[\[\]\"'“”‘’…·,.!?()]", " ", a["title"])
+    words = [w for w in t.split() if len(w) >= 2][:8]
+    return ",".join([secname(a)] + words)
+
 def build():
     if DIST.exists(): shutil.rmtree(DIST)
     shutil.copytree(ROOT / "static", DIST / "static")
     for f in ("robots.txt",) + (() if NO_CNAME else ("CNAME",)): shutil.copy(ROOT / f, DIST / f)
     shutil.copy(ROOT / "static/favicon.ico", DIST / "favicon.ico")
     arts = load()
-    # 메인
+    make_thumbs(arts)
+    try: make_faces()
+    except ImportError: pass
+    news = [a for a in arts if not a["column"]]
     cols = [a for a in arts if a["column"]]
-    body = ""
-    if arts: body += card(arts[0], big=True)
-    body += '<h2 class="sh">최신 기사</h2><div class="grid">' + "".join(card(a) for a in arts[1:7]) + "</div>"
-    if cols:
-        c = cols[0]
-        body += f'<a class="colband" href="{c["url"]}"><img src="{COLUMN_HEADER}" alt="최경집 교수의 시선" loading="lazy" width="1000" height="800"><span><b>최경집 교수의 시선</b>{esc(c["title"].replace("[최경집 교수의 시선] ",""))}<small>매주 월요일</small></span></a>'
+    # ── 메인 (모바일 순서대로 마크업, PC는 CSS grid 8:4로 재배치)
+    head = next((a for a in news if a.get("thumb")), arts[0])
+    subs = [a for a in news if a is not head and a.get("thumb")][:3]
+    if len(subs) < 3: subs += [a for a in arts if a is not head and a not in subs][:3 - len(subs)]
+    used = {id(head)} | {id(a) for a in subs}
+    top = f"""<section class="h-top"><div class="lead"><a href="{head['url']}"><span class="lph"><img src="{head['photo']}" alt=""></span>
+<span class="kick">■ {secname(head)}</span><strong>{esc(head['title'])}</strong><p>{esc(head.get('subtitle') or head['excerpt'])}</p>{meta_line(head)}</a></div>
+<ul class="subs">{"".join(row(a, ex=False) for a in subs)}</ul></section>"""
+    latest = f'<section class="h-latest">{boxh("최신기사", "/section/all/")}<ul class="tline">{"".join(timeline(a) for a in arts[:8])}</ul></section>'
+    blocks = ""
     for k, v in SECTIONS.items():
-        sa = [a for a in arts if a["section"] == k][:3]
-        if sa: body += f'<h2 class="sh"><a href="/section/{k}/">{v} ›</a></h2><div class="grid">' + "".join(card(a) for a in sa) + "</div>"
-    write("/", page("", body))
-    # 섹션
-    for k, v in SECTIONS.items():
+        if k == "column": continue
         sa = [a for a in arts if a["section"] == k]
-        head = f'<img class="colhead" src="{COLUMN_HEADER}" alt="최경집 교수의 시선"><p class="intro">식품마케팅을 가르치는 최경집 교수가 매주 월요일 시장과 식탁 사이를 씁니다.</p>' if k == "column" else ""
-        lst = "".join(card(a) for a in sa) or '<p class="empty">곧 첫 기사가 실립니다.</p>'
-        write(f"/section/{k}/", page(v, f'<h1 class="sh">{v}</h1>{head}<div class="grid">{lst}</div>', url=f"/section/{k}/", active=k))
-    # 기사
+        if not sa: continue
+        first = next((a for a in sa if a.get("thumb") and id(a) not in used), next((a for a in sa if id(a) not in used), sa[0]))
+        others = [a for a in sa if a is not first][:3]
+        blocks += f'<section class="sec">{boxh("■ " + v, f"/section/{k}/")}<ul class="first">{row(first)}</ul><ul class="tl">{"".join(tline(a) for a in others)}</ul></section>'
+    photos = [a for a in news if a.get("thumb") and id(a) not in used][:4]
+    strip = f'<section class="h-photo">{boxh("포토뉴스")}<div>' + "".join(f'<a href="{a["url"]}">{thumb(a)}<span>{esc(a["title"])}</span></a>' for a in photos) + "</div></section>"
+    more = f'<section class="h-more">{boxh("뉴스 더보기", "/section/all/")}<ul class="rows">{"".join(row(a) for a in arts[8:14])}</ul></section>'
+    body = f'<div class="home">{top}{latest}{colbox(arts)}<div class="h-secs">{blocks}</div><div class="h-side">{rank(arts, n=10, skip=16)}{ADSLOT}{columnists(arts)}</div>{strip}{more}</div>'
+    write("/", page("", body, arts=arts, keywords="뉴스더힐,식품,유통,전통시장,소상공인,칼럼"))
+    # ── 섹션 (+ 전체기사)
+    for k, v in list(SECTIONS.items()) + [("all", "전체기사")]:
+        sa = arts if k == "all" else [a for a in arts if a["section"] == k]
+        lst = "".join(row(a) for a in sa) or '<li class="empty">등록된 기사가 없습니다.</li>'
+        body = f"""<div class="cols"><div class="mainc"><p class="crumb"><a href="/">홈</a> &gt; <b>{v}</b></p>
+<h1 class="sech">{v}<small>총 {len(sa)}건</small></h1><ul class="rows list">{lst}</ul></div>{sidebar(arts)}</div>"""
+        write(f"/section/{k}/", page(v, body, url=f"/section/{k}/", active=k, arts=arts, keywords=f"뉴스더힐,{v}"))
+    # ── 기사
     for a in arts:
-        same = [x for x in arts if x["section"] == a["section"]]
-        i = same.index(a)
-        nav = ""
-        if i + 1 < len(same): nav += f'<a href="{same[i+1]["url"]}">‹ 이전 글</a>'
-        if i > 0: nav += f'<a href="{same[i-1]["url"]}">다음 글 ›</a>'
-        rel = [x for x in arts if x is not a][:3]
-        top = f'<img class="colhead" src="{COLUMN_HEADER}" alt="최경집 교수의 시선" width="1000" height="800">' if a["column"] else ""
-        img = COLUMN_HEADER if a["column"] else "/static/og-default.jpg"
-        ld = json.dumps({"@context": "https://schema.org", "@type": "NewsArticle", "headline": a["title"], "datePublished": f"{a['dt']:%Y-%m-%d}", "author": {"@type": "Person", "name": a["author"]}, "publisher": {"@type": "Organization", "name": NAME}}, ensure_ascii=False)
-        body = f"""<article class="post">{top}<a class="lab" href="/section/{a['section']}/">{SECTIONS[a['section']]}</a>
-<h1>{esc(a['title'])}</h1>{f'<p class="sub">{esc(a["subtitle"])}</p>' if a.get('subtitle') else ''}
-<p class="meta">{esc(a['author'])} · 입력 <time datetime="{a['dt']:%Y-%m-%d}">{a['dt']:%Y.%m.%d}</time>{(' · 수정 ' + esc(a['updated'])) if a.get('updated') else ''}</p>
+        same = [x for x in arts if x["section"] == a["section"] and x is not a][:6]
+        img = a.get("photo") or "/static/og-default.jpg"
+        ld = json.dumps({"@context": "https://schema.org", "@type": "NewsArticle", "headline": a["title"], "datePublished": f"{a['dt']:%Y-%m-%d}" + (f"T{a['time']}:00+09:00" if a.get("time") else ""), "author": {"@type": "Person", "name": a["author"]}, "publisher": {"@type": "Organization", "name": NAME}}, ensure_ascii=False)
+        body = f"""<div class="cols"><div class="mainc"><article class="post">
+<p class="crumb"><a href="/">홈</a> &gt; <a href="/section/{a['section']}/">{secname(a)}</a></p>
+<header class="ah"><h1>{esc(a['title'])}</h1>{f'<p class="sub">{esc(a["subtitle"])}</p>' if a.get('subtitle') else ''}
+<div class="info"><ul><li>기자명 <b>{esc(a['author'])}</b></li><li>입력 {dt(a)}</li>{('<li>수정 ' + esc(a['updated']) + '</li>') if a.get('updated') else ''}</ul>
+<span class="fs"><button type="button" data-d="-" aria-label="글자 작게">가-</button><button type="button" data-d="+" aria-label="글자 크게">가+</button></span></div></header>
 <div class="body">{a['html']}</div>
-<p class="share"><a href="mailto:?subject={esc(a['title'])}&amp;body={SITE}{a['url']}">메일로 공유</a></p>
-<nav class="pn">{nav}</nav></article>
-<h2 class="sh">관련 기사</h2><div class="grid">{''.join(card(x) for x in rel)}</div>
+<p class="byl">{esc(a['author'])} <a href="mailto:{EMAIL}">{EMAIL}</a></p>
+<p class="cr">저작권자 © 뉴스더힐 무단전재 및 재배포 금지</p>
+<p class="share"><a href="mailto:?subject={esc(a['title'])}&amp;body={SITE}{a['url']}">메일 공유</a></p>
+</article>
+<section class="rel">{boxh(secname(a) + " 다른 기사", f"/section/{a['section']}/")}<ul class="rows">{''.join(row(x, ex=False) for x in same)}</ul></section>
+</div>{sidebar(arts, a)}</div>
 <script type="application/ld+json">{ld}</script>"""
-        write(a["url"], page(a["title"], body, desc=a["desc"], url=a["url"], image=img, active=a["section"], ogtype="article"))
+        write(a["url"], page(a["title"], body, desc=a["desc"], url=a["url"], image=img, active=a["section"], ogtype="article", arts=arts, keywords=kw(a)))
     # 고정 페이지
     for f in sorted((ROOT / "pages").glob("*.md")):
         raw = f.read_text(encoding="utf-8"); m = re.match(r"---\n(.*?)\n---\n(.*)", raw, re.S)
         meta = dict(re.findall(r"^(\w+):\s*(.*)$", m.group(1), re.M))
-        write(meta["url"], page(meta["title"], f'<article class="post"><h1>{esc(meta["title"])}</h1><div class="body">{md(m.group(2))}</div></article>', url=meta["url"]))
+        write(meta["url"], page(meta["title"], f'<div class="cols"><div class="mainc"><article class="post"><header class="ah"><h1>{esc(meta["title"])}</h1></header><div class="body">{md(m.group(2))}</div></article></div>{sidebar(arts)}</div>', url=meta["url"], arts=arts))
     # RSS
     items = "".join(f"<item><title>{esc(a['title'])}</title><link>{SITE}{a['url']}</link><guid>{SITE}{a['url']}</guid><pubDate>{format_datetime(a['dt'].replace(hour=9))}</pubDate><description>{esc(a['desc'])}</description></item>" for a in arts[:30])
     (DIST / "rss.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>{NAME}</title><link>{SITE}/</link><description>{TAGLINE}</description><language>ko</language>{items}</channel></rss>', encoding="utf-8")
     # sitemap
-    urls = ["/", "/about/"] + [f"/section/{k}/" for k in SECTIONS] + [a["url"] for a in arts]
+    urls = ["/", "/about/"] + [f"/section/{k}/" for k in list(SECTIONS) + ["all"]] + [a["url"] for a in arts]
     (DIST / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + "".join(f"<url><loc>{SITE}{u}</loc></url>" for u in urls) + "</urlset>", encoding="utf-8")
     print(f"built {len(arts)} articles → {DIST}")
 

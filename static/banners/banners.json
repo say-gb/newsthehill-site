@@ -1,0 +1,19 @@
+{
+  "_note": "샘플 배너(SAMPLE). 실제 광고 계약·링크 확정 전 미리보기용. 교수님 확인 후 교체.",
+  "x": 0.5,
+  "rotate_sec": 30,
+  "min_blank": {"w": 120, "h": 200},
+  "banners": [
+    {"id": "sample-romang-hongsi", "sample": true, "type": "ad", "advertiser": "낭만클럽",
+     "img": "/static/banners/sample-hongsi-160x600.jpg", "href": "#sample-romang-hongsi", "w": 160, "h": 600,
+     "keywords": ["홍시", "반건시", "농산물", "식품", "시장", "소비기한", "전통시장"], "priority": 2,
+     "start": "2026-10-01", "end": "2026-12-31"},
+    {"id": "sample-theable-milddeok", "sample": true, "type": "ad", "advertiser": "더에이블",
+     "img": "/static/banners/sample-milddeok-300x250.jpg", "href": "#sample-theable-milddeok", "w": 300, "h": 250,
+     "keywords": ["밀떡", "떡볶이", "OEM", "식품", "유통", "소상공인", "브랜드"], "priority": 2,
+     "start": "2026-10-01", "end": "2026-12-31"},
+    {"id": "sample-column-kj", "sample": true, "type": "recommend", "advertiser": "뉴스더힐",
+     "img": "/static/banners/sample-column-160x600.jpg", "href": "/section/column/", "w": 160, "h": 600,
+     "keywords": ["칼럼", "마케팅", "브랜드", "최경집", "창업"], "priority": 1}
+  ]
+}
