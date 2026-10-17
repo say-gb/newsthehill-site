@@ -97,7 +97,7 @@ def clean(t): return re.sub(r"^\[[^\]]+\]\s*", "", t)
 def today():
     n = datetime.now(); return f"{n.year}년 {n.month}월 {n.day}일({WEEK[n.weekday()]})"
 
-LOGO = """<a class="logo" href="/" aria-label="뉴스더힐 홈"><!-- [원본 로고 대기] --><b>NEWS THE HILL</b></a>"""
+LOGO = """<a class="logo" href="/" aria-label="뉴스더힐 홈"><!-- 원본 로고: 교수님 제공(2026-10-17 12:52 KST 채팅 첨부), 크롭본 static/logo/newsthehill-logo.jpg / 원본 newsthehill-logo-original.jpg --><img src="/static/logo/newsthehill-logo.jpg" alt="NEWS THE HILL 뉴스더힐" width="1058" height="237"></a>"""
 
 def header(active, arts):
     menu = "".join(f'<a href="/section/{k}/"{" class=on" if k == active else ""}>{v}</a>' for k, v in SECTIONS.items())
