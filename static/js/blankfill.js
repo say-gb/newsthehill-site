@@ -119,7 +119,7 @@
     var B = pageKeywords(), A = personalKeywords();
     return cfg.banners.filter(function (b) {
       var excluded = (b.exclude_paths || []).some(function (path) { return location.pathname.indexOf(path) === 0; });
-      if (excluded || (b.advertiser === "낭만클럽" && location.pathname.indexOf("/articles/") === 0)) return false;
+      if (b.active === false || excluded || (b.advertiser === "낭만클럽" && location.pathname.indexOf("/articles/") === 0)) return false;
       return (!b.start || b.start <= today) && (!b.end || b.end >= today);
     }).map(function (b) {
       var scale = blank.el ? 1 : Math.min(1, (blank.w - GAP * 2) / b.w);        // 폭이 조금 모자라면 비율 축소
@@ -161,9 +161,11 @@
   function fill(a, c) {
     var b = c.b, sep = b.href.indexOf("?") < 0 ? "?" : "&";
     var href = /^#/.test(b.href) ? b.href : b.href + sep + "utm_source=newsthehill&utm_medium=blankfill&utm_content=" + encodeURIComponent(b.id);
-    a.innerHTML = '<div class="bf-lab">' + (b.type === "ad" ? "광고" : "추천") +
+    var noLabel = b.type === "ad" && b.img_label;
+    a.setAttribute("aria-label", b.type === "ad" ? "광고" : "추천");
+    a.innerHTML = '<div class="bf-lab' + (noLabel ? ' nolab' : '') + '">' + (noLabel ? "" : (b.type === "ad" ? "광고" : "추천")) +
       '<button type="button" aria-label="닫기">×</button></div><a href="' + href + '"><img src="' + b.img + '" width="' + c.w + '" height="' + c.h +
-      '" alt="' + (b.advertiser || "") + " 배너" + '"></a>';
+      '" alt="' + (b.type === "ad" ? "광고: " : "") + (b.advertiser || "") + " 배너" + '"></a>';
     a.querySelector("button").onclick = function () { sessionStorage.setItem("nth_bf_closed", "1"); closed = true; run(); };
   }
 

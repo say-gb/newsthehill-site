@@ -109,25 +109,31 @@ def load_ticker_blocklist():
 
 def ticker_pick(arts):
     blocklist = load_ticker_blocklist()
-    news, opinions, authors = [], [], set()
-    for a in arts:
-        if any(word in a["title"] for word in blocklist):
-            continue
-        if a["column"] is False and a["section"] != "opinion":
-            news.append(a)
-        elif a.get("author") not in authors:
-            opinions.append(a)
-            authors.add(a.get("author"))
-    return (news + opinions)[:6]
+    used = home_used_urls(arts)
+    eligible = [a for a in arts
+                if not any(word in a["title"] for word in blocklist)
+                and a["column"] is False and a["section"] != "opinion"
+                and a["url"] not in used]
+    return sorted(eligible, key=lambda a: (a["dt"], a.get("time", ""), a["slug"]), reverse=True)[:6]
+
+# Retain the collection itself as well as its result, so object IDs cannot be reused.
+_ticker_cache = None
+
+def cached_ticker_pick(arts):
+    global _ticker_cache
+    if _ticker_cache is None or _ticker_cache[0] is not arts:
+        _ticker_cache = (arts, ticker_pick(arts))
+    return _ticker_cache[1]
 
 def header(active, arts):
     menu = "".join(f'<a href="/section/{k}/"{" class=on" if k == active else ""}>{v}</a>' for k, v in SECTIONS.items())
-    ticker_arts = ticker_pick(arts)
+    ticker_arts = cached_ticker_pick(arts)
     tick = "".join(
         f'<li{' aria-hidden="true"' if i else ""}><a href="{esc(a["url"])}"{' tabindex="-1" aria-hidden="true"' if i else ""}>'
         f'<span class="tk-t">{a["dt"]:%m.%d}{esc(" " + a["time"]) if a.get("time") else ""}</span> {esc(a["title"])}</a></li>'
         for i, a in enumerate(ticker_arts)
     )
+    ticker = f'''<div class="ticker" role="region" aria-label="최신 기사"><div class="wrap"><b>최신</b><div class="tk-window"><ul id="tick" aria-live="off">{tick}</ul></div><button class="tk-toggle" type="button" aria-label="최신 기사 자동 넘김 일시정지/재생" aria-pressed="false" title="자동 넘김 일시정지/재생"><span aria-hidden="true">❚❚</span></button></div></div>''' if ticker_arts else ""
     return f"""<header class="hd">
 <div class="mast"><div class="wrap">
 <p class="date"><span id="today">{today()}</span><span id="wx" class="wx"></span></p>
@@ -136,7 +142,7 @@ def header(active, arts):
 <button class="ham" type="button" aria-label="전체메뉴"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M2 5h16M2 10h16M2 15h16" stroke="currentColor" stroke-width="2"/></svg></button></div>
 </div></div>
 <nav class="gnb" aria-label="주메뉴"><div class="wrap">{menu}</div></nav>
-<div class="ticker" role="region" aria-label="최신 기사"><div class="wrap"><b>최신</b><div class="tk-window"><ul id="tick" aria-live="off">{tick}</ul></div><button class="tk-toggle" type="button" aria-label="최신 기사 자동 넘김 일시정지/재생" aria-pressed="false" title="자동 넘김 일시정지/재생"><span aria-hidden="true">❚❚</span></button></div></div>
+{ticker}
 </header>"""
 
 FOOTER = f"""<footer class="foot">
@@ -206,16 +212,25 @@ def boxh(t, href="", tag="h2"):
 
 ADSLOT = '<div class="adslot" data-bf-slot="300x250" aria-label="광고 영역"></div>'
 
-def rank(arts, cur=None, n=10, skip=8):
+def rank_pick(arts, cur=None, n=10, skip=8):
     pool = [a for a in arts[skip:] if a is not cur]
     top = [a for a in pool if not a["column"]][:n//2]; top += [a for a in pool if a["column"]][:n - len(top)]
     top.sort(key=lambda a: (a["dt"], a.get("time", "")), reverse=True)
+    return top
+
+def rank(arts, cur=None, n=10, skip=8, *, picked=None):
+    top = rank_pick(arts, cur, n, skip) if picked is None else picked
     return f'<section class="rankbox">{boxh("주요 뉴스")}<ol class="rank">' + "".join(f'<li><b>{i+1}</b><a href="{a["url"]}">{esc(a["title"])}</a></li>' for i, a in enumerate(top)) + "</ol></section>"
 
-def columnists(arts):
+def columnists_pick(arts):
+    return [last for _, _, author, _ in COLUMNISTS
+            if (last := next((a for a in arts if a["author"] == author), None)) is not None]
+
+def columnists(arts, *, picked=None):
+    last_by_author = {a["author"]: a for a in (columnists_pick(arts) if picked is None else picked)}
     cb = ""
     for name, series, author, ph in COLUMNISTS:
-        last = next((a for a in arts if a["author"] == author), None)
+        last = last_by_author.get(author)
         if not last: continue
         cb += f'<li><a href="{last["url"]}"><span class="cph"><img src="{ph}" alt="{esc(name)}" loading="lazy"></span><b>{esc(series)}</b><span class="ct">{esc(clean(last["title"]))}</span></a></li>'
     return f'<section class="cbox">{boxh("칼럼니스트", "/section/opinion/")}<ul>{cb}</ul></section>'
@@ -223,11 +238,15 @@ def columnists(arts):
 def sidebar(arts, cur=None):
     return f'<aside class="side">{rank(arts, cur)}{ADSLOT}{columnists(arts)}</aside>'
 
-def colbox(arts):  # 「최경집 교수의 시선」 아이보리 박스
+def colbox_pick(arts):
     c = next((a for a in arts if a["author"] == "최경집"), None)
+    others = [a for a in arts if a["author"] == "최경집" and a is not c][:3] if c else []
+    return c, others
+
+def colbox(arts, *, picked=None):  # 「최경집 교수의 시선」 아이보리 박스
+    c, others = colbox_pick(arts) if picked is None else picked
     if not c: return ""
     first = re.sub(r"<[^>]+>", "", c["html"]).strip().split("\n")[0][:120]
-    others = [a for a in arts if a["author"] == "최경집" and a is not c][:3]
     return f"""<section class="sisun"><a class="sface" href="{c['url']}"><img src="{COLUMNISTS[0][3]}" alt="최경집 교수"></a>
 <div class="stx"><p class="slab">최경집 교수의 시선</p><a href="{c['url']}"><strong>{esc(clean(c['title']))}</strong><p>{esc(first)}…</p></a><em class="m">최경집 식품마케팅 교수<i>|</i>{dt(c)}</em></div>
 <ul class="smore">{''.join(f'<li><a href="{a["url"]}">{esc(clean(a["title"]))}</a><time>{a["dt"]:%m.%d}</time></li>' for a in others)}</ul></section>"""
@@ -274,6 +293,36 @@ def kw(a):
     words = [w for w in t.split() if len(w) >= 2][:8]
     return ",".join([secname(a)] + words)
 
+def home_selection(arts):
+    news = [a for a in arts if not a["column"]]
+    head = next((a for a in news if a.get("thumb")), arts[0])
+    subs = [a for a in news if a is not head and a.get("thumb")][:3]
+    if len(subs) < 3: subs += [a for a in arts if a is not head and a not in subs][:3 - len(subs)]
+    used = {id(head)} | {id(a) for a in subs}
+    blocks = []
+    for k, v in SECTIONS.items():
+        if k == "opinion": continue
+        sa = [a for a in arts if a["section"] == k]
+        if not sa: continue
+        first = next((a for a in sa if a.get("thumb") and id(a) not in used), next((a for a in sa if id(a) not in used), sa[0]))
+        others = [a for a in sa if a is not first][:3]
+        blocks.append((k, v, first, others))
+    colbox_main, colbox_others = colbox_pick(arts)
+    return dict(head=head, subs=subs, latest=arts[:8],
+                colbox_main=colbox_main, colbox_others=colbox_others, blocks=blocks,
+                rank_top=rank_pick(arts, n=10, skip=16), columnists_last=columnists_pick(arts),
+                photos=[a for a in news if a.get("thumb") and id(a) not in used][:4], more=arts[8:14])
+
+def home_used_urls(arts):
+    selected = home_selection(arts)
+    articles = [selected["head"], selected["colbox_main"]]
+    for key in ("subs", "latest", "colbox_others", "rank_top", "columnists_last", "photos", "more"):
+        articles.extend(selected[key])
+    for _, _, first, others in selected["blocks"]:
+        articles.append(first)
+        articles.extend(others)
+    return {a["url"] for a in articles if a is not None}
+
 def build():
     if DIST.exists(): shutil.rmtree(DIST)
     shutil.copytree(ROOT / "static", DIST / "static")
@@ -283,29 +332,20 @@ def build():
     make_thumbs(arts)
     try: make_faces()
     except ImportError: pass
-    news = [a for a in arts if not a["column"]]
-    cols = [a for a in arts if a["column"]]
     # ── 메인 (모바일 순서대로 마크업, PC는 CSS grid 8:4로 재배치)
-    head = next((a for a in news if a.get("thumb")), arts[0])
-    subs = [a for a in news if a is not head and a.get("thumb")][:3]
-    if len(subs) < 3: subs += [a for a in arts if a is not head and a not in subs][:3 - len(subs)]
-    used = {id(head)} | {id(a) for a in subs}
+    selected = home_selection(arts)
+    head, subs = selected["head"], selected["subs"]
     top = f"""<section class="h-top"><div class="lead"><a href="{head['url']}"><span class="lph"><img src="{head['photo']}" alt=""></span>
 <span class="kick">■ {secname(head)}</span><strong>{esc(head['title'])}</strong><p>{esc(head.get('subtitle') or head['excerpt'])}</p>{meta_line(head)}</a></div>
 <ul class="subs">{"".join(row(a, ex=False) for a in subs)}</ul></section>"""
-    latest = f'<section class="h-latest">{boxh("최신기사", "/section/all/")}<ul class="tline">{"".join(timeline(a) for a in arts[:8])}</ul></section>'
+    latest = f'<section class="h-latest">{boxh("최신기사", "/section/all/")}<ul class="tline">{"".join(timeline(a) for a in selected["latest"])}</ul></section>'
     blocks = ""
-    for k, v in SECTIONS.items():
-        if k == "opinion": continue
-        sa = [a for a in arts if a["section"] == k]
-        if not sa: continue
-        first = next((a for a in sa if a.get("thumb") and id(a) not in used), next((a for a in sa if id(a) not in used), sa[0]))
-        others = [a for a in sa if a is not first][:3]
+    for k, v, first, others in selected["blocks"]:
         blocks += f'<section class="sec">{boxh("■ " + v, f"/section/{k}/")}<ul class="first">{row(first)}</ul><ul class="tl">{"".join(tline(a) for a in others)}</ul></section>'
-    photos = [a for a in news if a.get("thumb") and id(a) not in used][:4]
+    photos = selected["photos"]
     strip = f'<section class="h-photo">{boxh("포토뉴스")}<div>' + "".join(f'<a href="{a["url"]}">{thumb(a)}<span>{esc(a["title"])}</span></a>' for a in photos) + "</div></section>"
-    more = f'<section class="h-more">{boxh("뉴스 더보기", "/section/all/")}<ul class="rows">{"".join(row(a) for a in arts[8:14])}</ul></section>'
-    body = f'<div class="home">{top}{latest}{colbox(arts)}<div class="h-secs">{blocks}</div><div class="h-side">{rank(arts, n=10, skip=16)}{ADSLOT}{columnists(arts)}</div>{strip}{more}</div>'
+    more = f'<section class="h-more">{boxh("뉴스 더보기", "/section/all/")}<ul class="rows">{"".join(row(a) for a in selected["more"])}</ul></section>'
+    body = f'<div class="home">{top}{latest}{colbox(arts, picked=(selected["colbox_main"], selected["colbox_others"]))}<div class="h-secs">{blocks}</div><div class="h-side">{rank(arts, picked=selected["rank_top"])}{ADSLOT}{columnists(arts, picked=selected["columnists_last"])}</div>{strip}{more}</div>'
     write("/", page("", body, arts=arts, keywords="뉴스더힐,식품,유통,전통시장,소상공인,칼럼"))
     # ── 섹션 (+ 전체기사)
     for k, v in list(SECTIONS.items()) + [("all", "전체기사")]:

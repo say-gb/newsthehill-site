@@ -118,6 +118,7 @@ figcaption{font-size:13.5px;color:#666;line-height:1.5;margin-top:8px;padding:0 
 .sep{color:#ccc;margin:0 6px}.copy{margin-top:10px;color:#999}
 /* blankfill 배너 */
 .nth-blank-slot .bf-lab{display:flex;justify-content:space-between;font:700 12px/20px var(--sans);color:#333;background:#fff;padding:2px 4px;margin-bottom:3px}
+.nth-blank-slot .bf-lab.nolab{justify-content:flex-end;padding:0 4px;margin-bottom:0}
 .nth-blank-slot button{border:0;background:none;color:#999;cursor:pointer;font-size:14px;line-height:16px;padding:0 2px}
 .nth-blank-slot img{border:1px solid #e5e5e5}
 /* 태블릿 이하 */
