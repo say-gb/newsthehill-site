@@ -1,0 +1,93 @@
+{
+  "_note": "광고 배너 3개(어반에이블·어썸에이치·낭만클럽, 교수님 2026-10-17 14:18). 모두 type ad, 슬롯에 광고 라벨. 기사 페이지(/articles/) 제외. 추천(뉴스더힐 칼럼)은 자체 콘텐츠로 광고 아님. 어썸에이치는 실제 링크 확정 전까지 비활성(이미지 파일은 보관, 2026-10-17 15:24).",
+  "x": 0.5,
+  "rotate_sec": 30,
+  "min_blank": {
+    "w": 120,
+    "h": 200
+  },
+  "banners": [
+    {
+      "id": "ad-urbanable-160x600",
+      "type": "ad",
+      "advertiser": "어반에이블",
+      "img": "/static/banners/ad-urbanable-160x600.png",
+      "href": "http://abanable.com/",
+      "w": 160,
+      "h": 600,
+      "keywords": [],
+      "exclude_paths": [
+        "/articles/"
+      ],
+      "priority": 2,
+      "start": "2026-10-01",
+      "end": "2026-12-31"
+    },
+    {
+      "id": "ad-urbanable-300x250",
+      "type": "ad",
+      "advertiser": "어반에이블",
+      "img": "/static/banners/ad-urbanable-300x250.png",
+      "href": "http://abanable.com/",
+      "w": 300,
+      "h": 250,
+      "keywords": [],
+      "exclude_paths": [
+        "/articles/"
+      ],
+      "priority": 2,
+      "start": "2026-10-01",
+      "end": "2026-12-31"
+    },
+    {
+      "id": "ad-nangmanclub-160x600",
+      "type": "ad",
+      "advertiser": "낭만클럽",
+      "img": "/static/banners/ad-nangmanclub-160x600.png",
+      "href": "https://nangmanclub.kr/",
+      "w": 160,
+      "h": 600,
+      "keywords": [],
+      "exclude_paths": [
+        "/articles/"
+      ],
+      "priority": 2,
+      "start": "2026-10-01",
+      "end": "2026-12-31"
+    },
+    {
+      "id": "ad-nangmanclub-300x250",
+      "type": "ad",
+      "advertiser": "낭만클럽",
+      "img": "/static/banners/ad-nangmanclub-300x250.png",
+      "href": "https://nangmanclub.kr/",
+      "w": 300,
+      "h": 250,
+      "keywords": [],
+      "exclude_paths": [
+        "/articles/"
+      ],
+      "priority": 2,
+      "start": "2026-10-01",
+      "end": "2026-12-31"
+    },
+    {
+      "id": "sample-column-kj",
+      "sample": true,
+      "type": "recommend",
+      "advertiser": "뉴스더힐",
+      "img": "/static/banners/sample-column-160x600.jpg",
+      "href": "/section/opinion/",
+      "w": 160,
+      "h": 600,
+      "keywords": [
+        "칼럼",
+        "마케팅",
+        "브랜드",
+        "최경집",
+        "창업"
+      ],
+      "priority": 1
+    }
+  ]
+}
