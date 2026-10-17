@@ -73,7 +73,6 @@
     },
     {
       "id": "sample-column-kj",
-      "sample": true,
       "type": "recommend",
       "advertiser": "뉴스더힐",
       "img": "/static/banners/sample-column-160x600.jpg",

@@ -69,8 +69,7 @@
   region.addEventListener('focusout', function () { window.setTimeout(schedule, 0); });
   button.addEventListener('click', function () {
     paused = !paused;
-    button.textContent = paused ? '▶' : '❚❚';
-    button.setAttribute('aria-label', '최신 기사 자동 넘김 ' + (paused ? '재생' : '정지'));
+    button.querySelector('span').textContent = paused ? '▶' : '❚❚';
     button.setAttribute('aria-pressed', String(paused));
     schedule();
   });

@@ -100,9 +100,29 @@ def today():
 
 LOGO = """<a class="logo" href="/" aria-label="뉴스더힐 홈"><!-- 원본 로고: 교수님 제공(2026-10-17 12:52 KST 채팅 첨부), 크롭본 static/logo/newsthehill-logo.jpg / 원본 newsthehill-logo-original.jpg --><img src="/static/logo/newsthehill-logo.jpg" alt="NEWS THE HILL 뉴스더힐" width="1058" height="237"></a>"""
 
+def load_ticker_blocklist():
+    try:
+        lines = (ROOT / "config" / "ticker_blocklist.txt").read_text(encoding="utf-8").splitlines()
+    except FileNotFoundError:
+        return ["낭만클럽", "낭만호랑", "더에이블", "광고"]
+    return [line for raw in lines if (line := raw.strip()) and not line.startswith("#")]
+
+def ticker_pick(arts):
+    blocklist = load_ticker_blocklist()
+    news, opinions, authors = [], [], set()
+    for a in arts:
+        if any(word in a["title"] for word in blocklist):
+            continue
+        if a["column"] is False and a["section"] != "opinion":
+            news.append(a)
+        elif a.get("author") not in authors:
+            opinions.append(a)
+            authors.add(a.get("author"))
+    return (news + opinions)[:6]
+
 def header(active, arts):
     menu = "".join(f'<a href="/section/{k}/"{" class=on" if k == active else ""}>{v}</a>' for k, v in SECTIONS.items())
-    ticker_arts = [a for a in arts if not any(word in a["title"] for word in ("낭만클럽", "낭만호랑", "더에이블", "광고"))][:6]
+    ticker_arts = ticker_pick(arts)
     tick = "".join(
         f'<li{' aria-hidden="true"' if i else ""}><a href="{esc(a["url"])}"{' tabindex="-1" aria-hidden="true"' if i else ""}>'
         f'<span class="tk-t">{a["dt"]:%m.%d}{esc(" " + a["time"]) if a.get("time") else ""}</span> {esc(a["title"])}</a></li>'
@@ -116,7 +136,7 @@ def header(active, arts):
 <button class="ham" type="button" aria-label="전체메뉴"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M2 5h16M2 10h16M2 15h16" stroke="currentColor" stroke-width="2"/></svg></button></div>
 </div></div>
 <nav class="gnb" aria-label="주메뉴"><div class="wrap">{menu}</div></nav>
-<div class="ticker" role="region" aria-label="최신 기사"><div class="wrap"><b>최신</b><div class="tk-window"><ul id="tick" aria-live="off">{tick}</ul></div><button class="tk-toggle" type="button" aria-label="최신 기사 자동 넘김 정지" aria-pressed="false">❚❚</button></div></div>
+<div class="ticker" role="region" aria-label="최신 기사"><div class="wrap"><b>최신</b><div class="tk-window"><ul id="tick" aria-live="off">{tick}</ul></div><button class="tk-toggle" type="button" aria-label="최신 기사 자동 넘김 일시정지/재생" aria-pressed="false" title="자동 넘김 일시정지/재생"><span aria-hidden="true">❚❚</span></button></div></div>
 </header>"""
 
 FOOTER = f"""<footer class="foot">
