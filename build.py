@@ -71,7 +71,7 @@ def load():
         meta["dt"] = datetime.strptime(meta["date"][:10], "%Y-%m-%d")
         if meta["section"] not in SECTIONS: raise SystemExit(f"{f}: 알 수 없는 section {meta['section']}")
         meta["html"] = md(body)
-        plain = re.sub(r"<[^>]+>", "", meta["html"])
+        plain = html.unescape(re.sub(r"<[^>]+>", "", meta["html"]))
         meta["desc"] = meta.get("subtitle") or plain[:110]
         meta["excerpt"] = plain[:90].strip() + "…"
         meta["url"] = f"/articles/{meta['slug']}/"
