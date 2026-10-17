@@ -164,7 +164,7 @@
     var noLabel = b.type === "ad" && b.img_label;
     a.setAttribute("aria-label", b.type === "ad" ? "광고" : "추천");
     a.innerHTML = '<div class="bf-lab' + (noLabel ? ' nolab' : '') + '">' + (noLabel ? "" : (b.type === "ad" ? "광고" : "추천")) +
-      '<button type="button" aria-label="닫기">×</button></div><a href="' + href + '"><img src="' + b.img + '" width="' + c.w + '" height="' + c.h +
+      '<button type="button" aria-label="닫기">×</button></div><a href="' + href + '"' + (b.type === "ad" ? ' rel="sponsored nofollow noopener"' : '') + '><img src="' + b.img + '" width="' + c.w + '" height="' + c.h +
       '" alt="' + (b.type === "ad" ? "광고: " : "") + (b.advertiser || "") + " 배너" + '"></a>';
     a.querySelector("button").onclick = function () { sessionStorage.setItem("nth_bf_closed", "1"); closed = true; run(); };
   }
