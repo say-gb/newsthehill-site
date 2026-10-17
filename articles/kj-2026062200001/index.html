@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;900&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
-<link rel="alternate" type="application/rss+xml" title="뉴스더힐" href="/rss.xml"><link rel="stylesheet" href="/static/style.css">
+<link rel="alternate" type="application/rss+xml" title="뉴스더힐" href="/rss.xml"><link rel="stylesheet" href="/static/style.css"><link rel="stylesheet" href="/static/css/motion.css">
 </head><body>
 <header class="hd">
 <div class="mast"><div class="wrap">
@@ -24,7 +24,7 @@
 <button class="ham" type="button" aria-label="전체메뉴"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M2 5h16M2 10h16M2 15h16" stroke="currentColor" stroke-width="2"/></svg></button></div>
 </div></div>
 <nav class="gnb" aria-label="주메뉴"><div class="wrap"><a href="/section/food/">식품·유통</a><a href="/section/local/">지역</a><a href="/section/people/">사람들</a><a href="/section/opinion/" class=on>오피니언</a><a href="/section/feature/">기획·이슈</a></div></nav>
-<div class="ticker"><div class="wrap"><b>최신</b><ul id="tick"><li><a href="/articles/hyun-2026101500001/">[박현 손해사정사의 정당한 보험금 리포트] 보험 ‘무사고 할인 전환’, 알면 챙기고 모르면 떼이는 숨은 권리</a></li><li><a href="/articles/kj-2026101200001/">[최경집 교수의 현장 마케팅 노트] &quot;그래서, 물건은 언제 들어옵니까?&quot;</a></li><li><a href="/articles/hyun-2026101000001/">[박현 손해사정사의 정당한 보험금 리포트] 운전자보험 ‘납입면제’, 당신이 놓치고 있는 숨은 권리</a></li><li><a href="/articles/danji-2026100600003/">[보험보상전문가 단지팀장의보험칼럼] 그 일상을 지키기 위해 나는 지금 무엇을 준비하고 있을까</a></li><li><a href="/articles/kj-2026100600002/">[최경집 교수의 현장 마케팅 노트] 사진 한 장이 열 마디 설명을 이긴다</a></li><li><a href="/articles/news-2026100600001/">송파구재향군인회, 오금공원 호국유공자 기념비 참배·환경정화</a></li></ul></div></div>
+<div class="ticker" role="region" aria-label="뉴스"><div class="wrap"><b>뉴스</b><div class="tk-window"><ul id="tick" aria-live="off"><li><a href="/articles/news-2026082300001/"><span class="tk-t">08.23 17:08</span> 한궁 탄생 20주년…AI 노인 치매예방 라디오 방송국 개국</a></li><li aria-hidden="true"><a href="/articles/news-2026081300002/" tabindex="-1" aria-hidden="true"><span class="tk-t">08.13 17:44</span> 대전대 서울한방병원, 최만수 위례동 재향군인회장 &#x27;제1호 명예자문위원&#x27; 위촉</a></li><li aria-hidden="true"><a href="/articles/news-2026032400001/" tabindex="-1" aria-hidden="true"><span class="tk-t">03.24 16:18</span> 송파구 초등학교 中 최대 재학생 위례별초, 하굣길 안전 민·관·경 합동 캠페인</a></li></ul></div><button class="tk-toggle" type="button" aria-label="뉴스 자동 넘김 일시정지/재생" aria-pressed="false" title="자동 넘김 일시정지/재생"><span aria-hidden="true">❚❚</span></button></div></div>
 </header>
 <main class="wrap"><div class="cols"><div class="mainc"><article class="post">
 <p class="crumb"><a href="/">홈</a> &gt; <a href="/section/opinion/">오피니언</a></p>
@@ -95,12 +95,12 @@
 <p class="copy">뉴스더힐의 모든 콘텐츠(기사)는 저작권법의 보호를 받으며, 무단 전재·복사·배포 등을 금합니다. Copyright © 2026 뉴스더힐. All rights reserved.</p></div>
 </footer>
 <script>
-(function(){var u=document.getElementById('tick');if(u&&u.children.length>1){var i=0;setInterval(function(){i=(i+1)%u.children.length;u.style.transform='translateY(-'+(i*30)+'px)'},4000)}
+(function(){
 var W=['일','월','화','수','목','금','토'],n=new Date(),t=document.getElementById('today');if(t)t.textContent=n.getFullYear()+'년 '+(n.getMonth()+1)+'월 '+n.getDate()+'일('+W[n.getDay()]+')';
 var C={0:'맑음',1:'대체로 맑음',2:'구름 조금',3:'흐림',45:'안개',48:'안개',51:'이슬비',53:'이슬비',55:'이슬비',61:'비',63:'비',65:'강한 비',71:'눈',73:'눈',75:'많은 눈',80:'소나기',81:'소나기',82:'강한 소나기',95:'뇌우'};
 fetch('https://api.open-meteo.com/v1/forecast?latitude=37.48&longitude=127.14&current=temperature_2m,weather_code&timezone=Asia%2FSeoul').then(function(r){return r.json()}).then(function(j){var c=j.current;document.getElementById('wx').textContent='송파 '+(C[c.weather_code]||'')+' '+Math.round(c.temperature_2m)+'℃'}).catch(function(){});
 document.querySelectorAll('.fs button').forEach(function(b){b.onclick=function(){var x=document.querySelector('.body');var s=parseFloat(getComputedStyle(x).fontSize)+(b.dataset.d==='+'?1:-1);x.style.fontSize=Math.max(14,Math.min(24,s))+'px'}});
 var f=document.querySelector('.srch');if(f)f.addEventListener('submit',function(e){var i=f.querySelector('input[name=q]');if(getComputedStyle(i).display==='none'||!i.value){e.preventDefault();f.classList.add('open');i.focus()}});
 var h=document.querySelector('.ham');if(h)h.onclick=function(){document.documentElement.classList.toggle('menu-open')};})();
-</script><script src="/static/js/blankfill.js" data-banners="/static/banners/banners.json" defer></script>
+</script><script src="/static/js/blankfill.js" data-banners="/static/banners/banners.json" defer></script><script src="/static/js/ticker.js" defer></script>
 </body></html>

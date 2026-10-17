@@ -1,5 +1,5 @@
 {
-  "_note": "광고 배너 3개(어반에이블·어썸에이치·낭만클럽, 교수님 2026-10-17 14:18). 모두 type ad, 슬롯에 광고 라벨. 기사 페이지(/articles/) 제외. 추천(뉴스더힐 칼럼)은 자체 콘텐츠로 광고 아님. 어썸에이치는 실제 링크 확정 전까지 비활성(이미지 파일은 보관, 2026-10-17 15:24).",
+  "_note": "광고 배너 3개(어반에이블·어썸에이치·낭만클럽, 교수님 2026-10-17 14:18). 모두 type ad, 슬롯에 광고 라벨. 기사 페이지(/articles/) 제외. 추천(뉴스더힐 칼럼)은 자체 콘텐츠로 광고 아님. 어썸에이치는 실제 링크 확정 전까지 비활성(이미지 파일은 보관, 2026-10-17 15:24). 이미지 안에 '광고' 표시가 있으면 슬롯 머리 '광고' 글자를 생략(img_label).",
   "x": 0.5,
   "rotate_sec": 30,
   "min_blank": {
@@ -21,7 +21,8 @@
       ],
       "priority": 2,
       "start": "2026-10-01",
-      "end": "2026-12-31"
+      "end": "2026-12-31",
+      "img_label": true
     },
     {
       "id": "ad-urbanable-300x250",
@@ -37,7 +38,8 @@
       ],
       "priority": 2,
       "start": "2026-10-01",
-      "end": "2026-12-31"
+      "end": "2026-12-31",
+      "img_label": true
     },
     {
       "id": "ad-nangmanclub-160x600",
@@ -53,7 +55,8 @@
       ],
       "priority": 2,
       "start": "2026-10-01",
-      "end": "2026-12-31"
+      "end": "2026-12-31",
+      "img_label": true
     },
     {
       "id": "ad-nangmanclub-300x250",
@@ -69,11 +72,11 @@
       ],
       "priority": 2,
       "start": "2026-10-01",
-      "end": "2026-12-31"
+      "end": "2026-12-31",
+      "img_label": true
     },
     {
       "id": "sample-column-kj",
-      "sample": true,
       "type": "recommend",
       "advertiser": "뉴스더힐",
       "img": "/static/banners/sample-column-160x600.jpg",
@@ -88,6 +91,28 @@
         "창업"
       ],
       "priority": 1
+    },
+    {
+      "id": "ad-awesomeh-160x600",
+      "type": "ad",
+      "advertiser": "어썸에이치",
+      "img": "/static/banners/ad-awesomeh-160x600.png",
+      "href": "#",
+      "w": 160,
+      "h": 600,
+      "active": false,
+      "img_label": true
+    },
+    {
+      "id": "ad-awesomeh-300x250",
+      "type": "ad",
+      "advertiser": "어썸에이치",
+      "img": "/static/banners/ad-awesomeh-300x250.png",
+      "href": "#",
+      "w": 300,
+      "h": 250,
+      "active": false,
+      "img_label": true
     }
   ]
 }
