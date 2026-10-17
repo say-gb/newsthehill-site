@@ -118,7 +118,7 @@ FOOTER = f"""<footer class="foot">
 <div class="wrap finfo"><div class="flogo"><b>뉴스더힐</b><small>NEWS THE HILL</small></div>
 <table><tbody>
 <tr><th>제호</th><td>뉴스더힐</td><th>등록번호</th><td>서울, 아56252</td><th>등록일</th><td>2025.11.27</td></tr>
-<tr><th>발행인·편집인</th><td>최만수</td><th>청소년보호책임자</th><td>최만수</td><th>최초 발행일</th><td>2025.11.27</td></tr>
+<tr><th>발행인·편집인</th><td>최만수</td><th>청소년보호책임자</th><td>최만수</td><th>최초 발행일</th><td>2026.03.24 <small>[확인 필요]</small></td></tr>
 <tr><th>도메인</th><td colspan="5">newsthehill.com</td></tr>
 <tr><th>발행소</th><td colspan="5">서울 송파구 위례광장로 199, 501-30호 (장지동, 성희프라자) <span class="sep">|</span> 사무실 경기도 성남시 수정구 위례대로 83 밀리토피아호텔 B1, 21호</td></tr>
 <tr><th>대표전화</th><td>02-6951-5540</td><th>팩스</th><td>070-4009-3314</td><th>이메일</th><td><a href="mailto:{EMAIL}">{EMAIL}</a></td></tr>
