@@ -117,9 +117,10 @@ FOOTER = f"""<footer class="foot">
 <div class="fmenu"><div class="wrap"><a href="/about/">회사소개</a><a href="/policy/terms/">이용약관</a><a href="/policy/privacy/"><b>개인정보처리방침</b></a><a href="/policy/youth/">청소년보호정책</a><a href="mailto:{EMAIL}?subject=%EA%B8%B0%EC%82%AC%EC%A0%9C%EB%B3%B4">기사제보</a><a href="mailto:{EMAIL}?subject=%EA%B4%91%EA%B3%A0%EB%AC%B8%EC%9D%98">광고문의</a><a href="/rss.xml">RSS</a></div></div>
 <div class="wrap finfo"><div class="flogo"><b>뉴스더힐</b><small>NEWS THE HILL</small></div>
 <table><tbody>
-<tr><th>제호</th><td>뉴스더힐</td><th>등록번호</th><td>서울 아 56252</td><th>등록일</th><td>2025.11.24</td></tr>
-<tr><th>발행인·편집인</th><td>최만수</td><th>청소년보호책임자</th><td>최만수</td><th>최초 발행일</th><td><!-- TODO(교수님 확인) -->확인 중</td></tr>
-<tr><th>발행소</th><td colspan="5">서울 송파구 위례광장로 199 성희트리차 501-30호 <span class="sep">|</span> 사무실 경기도 성남시 수정구 위례대로 83 밀리토피아호텔 B1, 21호</td></tr>
+<tr><th>제호</th><td>뉴스더힐</td><th>등록번호</th><td>서울, 아56252</td><th>등록일</th><td>2025.11.27</td></tr>
+<tr><th>발행인·편집인</th><td>최만수</td><th>청소년보호책임자</th><td>최만수</td><th>최초 발행일</th><td>2025.11.27</td></tr>
+<tr><th>도메인</th><td colspan="5">newsthehill.com</td></tr>
+<tr><th>발행소</th><td colspan="5">서울 송파구 위례광장로 199, 501-30호 (장지동, 성희프라자) <span class="sep">|</span> 사무실 경기도 성남시 수정구 위례대로 83 밀리토피아호텔 B1, 21호</td></tr>
 <tr><th>대표전화</th><td>02-6951-5540</td><th>팩스</th><td>070-4009-3314</td><th>이메일</th><td><a href="mailto:{EMAIL}">{EMAIL}</a></td></tr>
 </tbody></table>
 <p class="copy">뉴스더힐의 모든 콘텐츠(기사)는 저작권법의 보호를 받으며, 무단 전재·복사·배포 등을 금합니다. Copyright © {datetime.now().year} 뉴스더힐. All rights reserved.</p></div>
