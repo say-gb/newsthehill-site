@@ -18,7 +18,7 @@ NAME = "뉴스더힐"
 TAGLINE = "높은 시선으로 세상을, 깊은 취재로 진실을"
 SECTIONS = {  # slug: 이름 (하단 탭 순서)
     "food": "식품", "distribution": "유통", "market": "소상공인·시장",
-    "people": "사람들", "local": "지역", "column": "칼럼",
+    "people": "사람들", "local": "지역", "editorial": "사설", "column": "칼럼",
 }
 COLUMN_HEADER = "/static/column-header-sisun.jpg"
 
