@@ -1,7 +1,8 @@
 ---
 title: [최경집 교수의 시선] 왜 지금, 시장과 식탁 사이를 쓰는가
 subtitle: 창간에 부쳐 — 이 신문이 매주 들여다볼 것들
-section: column
+section: opinion
+kind: 칼럼
 author: 최경집
 date: 2026-10-19
 display_date: [예시] 0000.00.00 00:00

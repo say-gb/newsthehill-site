@@ -156,3 +156,9 @@ figcaption{font-size:13.5px;color:#666;line-height:1.5;margin-top:8px;padding:0 
 }
 html.menu-open .gnb .wrap{flex-wrap:wrap}
 @media(max-width:767px){.srch.open input{display:block;width:150px;padding:5px 8px;border:1px solid #bbb}}
+.okick{display:inline-block;font:700 12px/1 var(--sans);color:var(--g);border:1px solid var(--g);padding:3px 6px;margin:0 0 6px;vertical-align:middle}
+.row .okick{margin:0 0 4px}
+.ah .okick{margin-bottom:10px}
+.empty b{display:block;font-size:17px;color:#111;margin-bottom:6px}.empty span{display:block}
+.empty{border:1px solid var(--ln);padding:40px 20px;text-align:center;list-style:none}
+@media(max-width:599px){.gnb .wrap{display:grid;grid-template-columns:repeat(5,1fr);overflow:visible;padding:0;justify-content:stretch}.gnb a{padding:0;text-align:center;font-size:14px;line-height:42px;letter-spacing:-.04em;white-space:nowrap}}

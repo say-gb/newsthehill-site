@@ -17,8 +17,8 @@ SITE = "https://newsthehill.com"
 NAME = "뉴스더힐"
 TAGLINE = "높은 시선으로 세상을, 깊은 취재로 진실을"
 SECTIONS = {  # slug: 이름 (하단 탭 순서)
-    "food": "식품", "distribution": "유통", "market": "소상공인·시장",
-    "people": "사람들", "local": "지역", "editorial": "사설", "column": "칼럼",
+    "food": "식품·유통", "local": "지역", "people": "사람들",
+    "opinion": "오피니언", "feature": "기획·이슈",
 }
 COLUMN_HEADER = "/static/column-header-sisun.jpg"
 
@@ -75,7 +75,8 @@ def load():
         meta["desc"] = meta.get("subtitle") or plain[:110]
         meta["excerpt"] = plain[:90].strip() + "…"
         meta["url"] = f"/articles/{meta['slug']}/"
-        meta["column"] = meta.get("column", "").lower() == "true" or meta["section"] == "column"
+        meta["column"] = meta.get("column", "").lower() == "true" or (meta["section"] == "opinion" and meta.get("kind") in ("칼럼", "기고"))
+        meta["kicker"] = meta.get("kind", "") if meta["section"] == "opinion" else ""
         arts.append(meta)
     arts.sort(key=lambda a: (a["dt"], a.get("time", ""), a["slug"]), reverse=True)
     return arts
@@ -164,7 +165,8 @@ def meta_line(a):
     return f'<em class="m">{esc(a["author"])}<i>|</i>{dt(a)}</em>'
 
 def row(a, ex=True):  # 썸네일 + 제목 + 요약 + 기자·시각
-    return f"""<li class="row{' nothumb' if not a.get('thumb') else ''}"><a href="{a['url']}">{thumb(a)}<strong>{esc(a['title'])}</strong>
+    kicker = f'<span class="okick">{esc(a["kicker"])}</span>' if a['kicker'] else ""
+    return f"""<li class="row{' nothumb' if not a.get('thumb') else ''}"><a href="{a['url']}">{thumb(a)}{kicker}<strong>{esc(a['title'])}</strong>
 {f'<p>{esc(a["excerpt"])}</p>' if ex else ''}{meta_line(a)}</a></li>"""
 
 def tline(a):
@@ -191,7 +193,7 @@ def columnists(arts):
         last = next((a for a in arts if a["author"] == author), None)
         if not last: continue
         cb += f'<li><a href="{last["url"]}"><span class="cph"><img src="{ph}" alt="{esc(name)}" loading="lazy"></span><b>{esc(series)}</b><span class="ct">{esc(clean(last["title"]))}</span></a></li>'
-    return f'<section class="cbox">{boxh("칼럼니스트", "/section/column/")}<ul>{cb}</ul></section>'
+    return f'<section class="cbox">{boxh("칼럼니스트", "/section/opinion/")}<ul>{cb}</ul></section>'
 
 def sidebar(arts, cur=None):
     return f'<aside class="side">{rank(arts, cur)}{ADSLOT}{columnists(arts)}</aside>'
@@ -269,7 +271,7 @@ def build():
     latest = f'<section class="h-latest">{boxh("최신기사", "/section/all/")}<ul class="tline">{"".join(timeline(a) for a in arts[:8])}</ul></section>'
     blocks = ""
     for k, v in SECTIONS.items():
-        if k == "column": continue
+        if k == "opinion": continue
         sa = [a for a in arts if a["section"] == k]
         if not sa: continue
         first = next((a for a in sa if a.get("thumb") and id(a) not in used), next((a for a in sa if id(a) not in used), sa[0]))
@@ -283,19 +285,25 @@ def build():
     # ── 섹션 (+ 전체기사)
     for k, v in list(SECTIONS.items()) + [("all", "전체기사")]:
         sa = arts if k == "all" else [a for a in arts if a["section"] == k]
-        lst = "".join(row(a) for a in sa) or '<li class="empty">등록된 기사가 없습니다.</li>'
+        lst = "".join(row(a) for a in sa) or f'<li class="empty"><b>준비 중입니다</b><span>{v} 기사를 준비하고 있습니다. 곧 찾아뵙겠습니다.</span></li>'
         body = f"""<div class="cols"><div class="mainc"><p class="crumb"><a href="/">홈</a> &gt; <b>{v}</b></p>
 <h1 class="sech">{v}<small>총 {len(sa)}건</small></h1><ul class="rows list">{lst}</ul></div>{sidebar(arts)}</div>"""
         write(f"/section/{k}/", page(v, body, url=f"/section/{k}/", active=k, arts=arts, keywords=f"뉴스더힐,{v}"))
+    for old, target in (("distribution", "food"), ("market", "food"), ("editorial", "opinion"), ("column", "opinion")):
+        url = f"/section/{target}/"
+        name = SECTIONS[target]
+        write(f"/section/{old}/", f'<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0; url={url}"><link rel="canonical" href="{SITE}{url}"><title>{name} - 뉴스더힐</title></head><body><a href="{url}">{name} 섹션으로 이동</a></body></html>')
     # ── 기사
     for a in arts:
         same = [x for x in arts if x["section"] == a["section"] and x is not a][:6]
         img = a.get("photo") or "/static/og-default.jpg"
         ld = json.dumps({"@context": "https://schema.org", "@type": "NewsArticle", "headline": a["title"], "datePublished": f"{a['dt']:%Y-%m-%d}" + (f"T{a['time']}:00+09:00" if a.get("time") else ""), "author": {"@type": "Person", "name": a["author"]}, "publisher": {"@type": "Organization", "name": NAME}}, ensure_ascii=False)
         byline_email = esc(a["reporter_email"]) if a.get("reporter_email") else f'<a href="mailto:{EMAIL}">{EMAIL}</a>'
+        kicker = esc(a["kicker"])
+        kicker_label = f'<p class="okick">{kicker}</p>' if kicker else ""
         body = f"""<div class="cols"><div class="mainc"><article class="post">
 <p class="crumb"><a href="/">홈</a> &gt; <a href="/section/{a['section']}/">{secname(a)}</a></p>
-<header class="ah"><h1>{esc(a['title'])}</h1>{f'<p class="sub">{esc(a["subtitle"])}</p>' if a.get('subtitle') else ''}
+<header class="ah">{kicker_label}<h1>{esc(a['title'])}</h1>{f'<p class="sub">{esc(a["subtitle"])}</p>' if a.get('subtitle') else ''}
 <div class="info"><ul><li>기자명 <b>{esc(a['author'])}</b></li><li>입력 {dt(a)}</li>{('<li>수정 ' + esc(a['updated']) + '</li>') if a.get('updated') else ''}</ul>
 <span class="fs"><button type="button" data-d="-" aria-label="글자 작게">가-</button><button type="button" data-d="+" aria-label="글자 크게">가+</button></span></div></header>
 <div class="body">{a['html']}</div>

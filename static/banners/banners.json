@@ -13,7 +13,7 @@
      "keywords": [], "exclude_paths": ["/articles/"], "priority": 2,
      "start": "2026-10-01", "end": "2026-12-31"},
     {"id": "sample-column-kj", "sample": true, "type": "recommend", "advertiser": "뉴스더힐",
-     "img": "/static/banners/sample-column-160x600.jpg", "href": "/section/column/", "w": 160, "h": 600,
+     "img": "/static/banners/sample-column-160x600.jpg", "href": "/section/opinion/", "w": 160, "h": 600,
      "keywords": ["칼럼", "마케팅", "브랜드", "최경집", "창업"], "priority": 1}
   ]
 }
