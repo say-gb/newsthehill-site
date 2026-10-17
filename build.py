@@ -108,8 +108,9 @@ def load_ticker_blocklist():
     return [line for raw in lines if (line := raw.strip()) and not line.startswith("#")]
 
 def ticker_pick(arts):
+    """티커는 머리기사 영역(머리기사+아래 3편)과 최신기사 목록에 없는 편집국·기자 기사만, 최대 6편, 없으면 숨김."""
     blocklist = load_ticker_blocklist()
-    used = home_used_urls(arts)
+    used = ticker_excluded_urls(arts)
     eligible = [a for a in arts
                 if not any(word in a["title"] for word in blocklist)
                 and a["column"] is False and a["section"] != "opinion"
@@ -313,14 +314,9 @@ def home_selection(arts):
                 rank_top=rank_pick(arts, n=10, skip=16), columnists_last=columnists_pick(arts),
                 photos=[a for a in news if a.get("thumb") and id(a) not in used][:4], more=arts[8:14])
 
-def home_used_urls(arts):
+def ticker_excluded_urls(arts):
     selected = home_selection(arts)
-    articles = [selected["head"], selected["colbox_main"]]
-    for key in ("subs", "latest", "colbox_others", "rank_top", "columnists_last", "photos", "more"):
-        articles.extend(selected[key])
-    for _, _, first, others in selected["blocks"]:
-        articles.append(first)
-        articles.extend(others)
+    articles = [selected["head"], *selected["subs"], *selected["latest"]]
     return {a["url"] for a in articles if a is not None}
 
 def build():
