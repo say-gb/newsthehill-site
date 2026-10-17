@@ -10,7 +10,7 @@
      "start": "2026-10-01", "end": "2026-12-31"},
     {"id": "sample-theable-milddeok", "sample": true, "type": "ad", "advertiser": "더에이블",
      "img": "/static/banners/sample-milddeok-300x250.jpg", "href": "#sample-theable-milddeok", "w": 300, "h": 250,
-     "keywords": ["밀떡", "떡볶이", "OEM", "식품", "유통", "소상공인", "브랜드"], "priority": 2,
+     "keywords": [], "exclude_paths": ["/articles/"], "priority": 2,
      "start": "2026-10-01", "end": "2026-12-31"},
     {"id": "sample-column-kj", "sample": true, "type": "recommend", "advertiser": "뉴스더힐",
      "img": "/static/banners/sample-column-160x600.jpg", "href": "/section/column/", "w": 160, "h": 600,

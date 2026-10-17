@@ -1,5 +1,6 @@
 /* 뉴스더힐 — 인터넷신문형 레이아웃 (2026-10 리디자인 시안) */
-:root{--g:#0E362A;--gold:#C9A24B;--ivory:#F6F0E4;--ink:#1a1a1a;--t2:#444;--meta:#777;--ln:#ddd;--ln2:#eee;--red:#b4141e;
+/* Gold placements only: (1) 최경집 교수의 시선 column accent rule/label (.sisun/.slab); (2) active menu underline (.gnb a.on). */
+:root{--g:#283043;--gold:#C9A24B;--ivory:#F6F0E4;--ink:#1a1a1a;--t2:#444;--meta:#777;--ln:#ddd;--ln2:#eee;--red:#b4141e;
 --serif:"Noto Serif KR","Noto Serif CJK KR","Nanum Myeongjo",serif;
 --sans:"Pretendard","Pretendard Variable","Noto Sans KR","Noto Sans CJK KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif}
 *{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
@@ -12,7 +13,7 @@ html.bf-merged .wrap{margin-left:var(--bf-left,8px);margin-right:auto}
 /* 마스트헤드 */
 .mast .wrap{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding-top:18px;padding-bottom:16px}
 .date{font-size:12px;color:#555}.wx:not(:empty):before{content:"·";margin:0 6px;color:#999}
-.logo{background:#262f40;padding:0;display:block;line-height:0}
+.logo{background:#283043;padding:0;display:block;line-height:0}
 .logo img{display:block;height:64px;width:auto}
 .tools{justify-self:end;display:flex;align-items:center;gap:6px}
 .srch{display:flex;border:1px solid #bbb}.srch input{border:0;padding:6px 9px;width:190px;font:13px var(--sans);outline:0;background:#fff}
@@ -22,7 +23,7 @@ html.bf-merged .wrap{margin-left:var(--bf-left,8px);margin-right:auto}
 .gnb{border-top:1px solid #222;border-bottom:1px solid var(--ln)}
 .gnb .wrap{display:flex;justify-content:center;overflow-x:auto;scrollbar-width:none}
 .gnb a{font:700 16px/46px var(--sans);padding:0 26px;white-space:nowrap;color:#111;border-bottom:3px solid transparent;margin-bottom:-1px}
-.gnb a.on{border-color:var(--g);color:var(--g)}.gnb a:hover{text-decoration:none;color:var(--g)}
+.gnb a.on{border-color:var(--gold);color:var(--g)}.gnb a:hover{text-decoration:none;color:var(--g)}
 /* 티커 */
 .ticker{border-bottom:1px solid var(--ln)}
 .ticker .wrap{display:flex;align-items:center;height:32px;overflow:hidden}
@@ -60,7 +61,7 @@ main.wrap{padding-top:20px;padding-bottom:34px}
 .slab{font:700 13px/1 var(--serif);color:#8a6a1f;margin-bottom:7px}
 .stx strong{display:block;font:700 21px/1.38 var(--serif);color:#111;letter-spacing:-.04em}
 .stx p{font-size:14px;color:#444;margin-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.smore{border-left:1px solid #e0d6bf;padding-left:18px}.smore li{display:flex;gap:8px;font-size:13.5px;padding:4px 0}
+.smore{border-left:1px solid var(--ln);padding-left:18px}.smore li{display:flex;gap:8px;font-size:13.5px;padding:4px 0}
 .smore a{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.smore time{color:var(--meta);font-size:12px}
 /* 섹션 블록 */
 .h-secs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px 26px;align-content:start}
