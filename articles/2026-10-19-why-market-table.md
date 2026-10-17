@@ -5,8 +5,8 @@ section: opinion
 kind: 칼럼
 author: 최경집
 date: 2026-10-19
-display_date: [예시] 0000.00.00 00:00
 slug: why-market-table
+draft: true
 column: true
 ---
 
