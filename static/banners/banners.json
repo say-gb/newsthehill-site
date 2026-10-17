@@ -6,7 +6,7 @@
   "banners": [
     {"id": "sample-romang-hongsi", "sample": true, "type": "ad", "advertiser": "낭만클럽",
      "img": "/static/banners/sample-hongsi-160x600.jpg", "href": "#sample-romang-hongsi", "w": 160, "h": 600,
-     "keywords": ["홍시", "반건시", "농산물", "식품", "시장", "소비기한", "전통시장"], "priority": 2,
+     "keywords": [], "exclude_paths": ["/articles/"], "priority": 2,
      "start": "2026-10-01", "end": "2026-12-31"},
     {"id": "sample-theable-milddeok", "sample": true, "type": "ad", "advertiser": "더에이블",
      "img": "/static/banners/sample-milddeok-300x250.jpg", "href": "#sample-theable-milddeok", "w": 300, "h": 250,

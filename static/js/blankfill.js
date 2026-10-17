@@ -1,7 +1,7 @@
 /*! blankfill.js v0.1 (미리보기) — 뉴스더힐 빈 공간 배너 삽입
  * 특허 제10-2410472호(주식회사 더에이블) 청구항 10의 5단계를 정적 사이트에서 구현:
  *  1) 레이아웃 정보로 구성요소 위치·크기 측정   2) 웹페이지 스캔으로 블랭크 영역 탐색
- *  3) 기준보다 작은 블랭크가 여럿이면 인접 구성요소를 재배열해 하나로 병합(≥1280px)
+ *  3) 기준보다 작은 블랭크가 여럿이면 인접 구성요소를 재배열해 하나로 병합(≥1024px)
  *  4) 블랭크 크기에 맞는 타겟 데이터(배너) 선택 — 키워드 점수 P = A·(1−x) + B·x
  *  5) 블랭크 위치에 배너를 삽입해 웹페이지와 함께 표시 (닫기 시 원상복구)
  * 서버·쿠키 없음. 개인 키워드(A)는 이 브라우저 localStorage의 최근 읽은 기사 키워드만 사용.
@@ -10,7 +10,7 @@
   "use strict";
   var me = document.currentScript || {};
   var CFG_URL = (me.dataset && me.dataset.banners) || "/static/banners/banners.json";
-  var MIN_VIEW = 1280;              // 병합(재배열)은 PC 넓은 화면에서만
+  var MIN_VIEW = 1024;              // 병합(재배열)은 1024px 이상에서
   var GAP = 12;                      // 배너 사이·가장자리 여백
   var DEBUG = /[?&]bf=debug/.test(location.search);
   var cfg = null, slots = [], timers = [], closed = sessionStorage.getItem("nth_bf_closed") === "1";
@@ -89,7 +89,7 @@
     var vw = document.documentElement.clientWidth;
     if (vw - LEFT - ww < minW) {
       var nw = vw - LEFT - minW;
-      if (nw < 1040) return false;                         // 너무 줄어들면 하지 않음
+      if (nw < 800) return false;                         // 너무 줄어들면 하지 않음
       root.style.setProperty("--bf-wrap", nw + "px");
     }
     root.classList.add("bf-merged");
@@ -118,10 +118,13 @@
     var today = new Date().toISOString().slice(0, 10), x = cfg.x == null ? 0.5 : cfg.x;
     var B = pageKeywords(), A = personalKeywords();
     return cfg.banners.filter(function (b) {
+      var excluded = (b.exclude_paths || []).some(function (path) { return location.pathname.indexOf(path) === 0; });
+      if (excluded || (b.advertiser === "낭만클럽" && location.pathname.indexOf("/articles/") === 0)) return false;
       return (!b.start || b.start <= today) && (!b.end || b.end >= today);
     }).map(function (b) {
       var scale = blank.el ? 1 : Math.min(1, (blank.w - GAP * 2) / b.w);        // 폭이 조금 모자라면 비율 축소
-      var p = ratio(b.keywords || [], A) * (1 - x) + ratio(b.keywords || [], B) * x;
+      var kws = b.advertiser === "낭만클럽" ? [] : (b.keywords || []);
+      var p = ratio(kws, A) * (1 - x) + ratio(kws, B) * x;
       return { b: b, scale: scale, w: Math.round(b.w * scale), h: Math.round(b.h * scale), score: p + (b.priority || 0) * 0.01 };
     }).filter(function (c) { return c.scale >= 0.8 && c.h <= blank.h; })
       .sort(function (a, b) { return b.score - a.score; });

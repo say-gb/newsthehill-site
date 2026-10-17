@@ -4,6 +4,8 @@ subtitle: '팔 수 있는 날'에서 '먹을 수 있는 날'로
 section: food
 author: 뉴스더힐 편집국
 date: 2026-10-19
+display_date: [예시] 0000.00.00 00:00
+reporter_email: [기자 이메일]
 slug: shelf-life
 ---
 

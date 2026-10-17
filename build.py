@@ -88,16 +88,16 @@ COLUMNISTS = [  # (이름, 연재명, 저자 문자열, 사진)
 ]
 EMAIL = "info@newsthehill.com"
 
-def d(a): return f"{a['dt']:%Y.%m.%d}"
-def dt(a): return f"{a['dt']:%Y.%m.%d}" + (f" {a['time']}" if a.get("time") else "")
-def hm(a): return f"{a['dt']:%m.%d}" + (f"<b>{a['time']}</b>" if a.get("time") else "")
+def d(a): return a.get("display_date") or f"{a['dt']:%Y.%m.%d}"
+def dt(a): return a.get("display_date") or f"{a['dt']:%Y.%m.%d}" + (f" {a['time']}" if a.get("time") else "")
+def hm(a): return a.get("display_date") or f"{a['dt']:%m.%d}" + (f"<b>{a['time']}</b>" if a.get("time") else "")
 def secname(a): return SECTIONS[a["section"]]
 def clean(t): return re.sub(r"^\[[^\]]+\]\s*", "", t)
 
 def today():
     n = datetime.now(); return f"{n.year}년 {n.month}월 {n.day}일({WEEK[n.weekday()]})"
 
-LOGO = """<a class="logo" href="/" aria-label="뉴스더힐 홈"><b>뉴스더힐</b><small>NEWS THE HILL</small></a>"""
+LOGO = """<a class="logo" href="/" aria-label="뉴스더힐 홈"><!-- [원본 로고 대기] --><b>NEWS THE HILL</b></a>"""
 
 def header(active, arts):
     menu = "".join(f'<a href="/section/{k}/"{" class=on" if k == active else ""}>{v}</a>' for k, v in SECTIONS.items())
@@ -291,13 +291,14 @@ def build():
         same = [x for x in arts if x["section"] == a["section"] and x is not a][:6]
         img = a.get("photo") or "/static/og-default.jpg"
         ld = json.dumps({"@context": "https://schema.org", "@type": "NewsArticle", "headline": a["title"], "datePublished": f"{a['dt']:%Y-%m-%d}" + (f"T{a['time']}:00+09:00" if a.get("time") else ""), "author": {"@type": "Person", "name": a["author"]}, "publisher": {"@type": "Organization", "name": NAME}}, ensure_ascii=False)
+        byline_email = esc(a["reporter_email"]) if a.get("reporter_email") else f'<a href="mailto:{EMAIL}">{EMAIL}</a>'
         body = f"""<div class="cols"><div class="mainc"><article class="post">
 <p class="crumb"><a href="/">홈</a> &gt; <a href="/section/{a['section']}/">{secname(a)}</a></p>
 <header class="ah"><h1>{esc(a['title'])}</h1>{f'<p class="sub">{esc(a["subtitle"])}</p>' if a.get('subtitle') else ''}
 <div class="info"><ul><li>기자명 <b>{esc(a['author'])}</b></li><li>입력 {dt(a)}</li>{('<li>수정 ' + esc(a['updated']) + '</li>') if a.get('updated') else ''}</ul>
 <span class="fs"><button type="button" data-d="-" aria-label="글자 작게">가-</button><button type="button" data-d="+" aria-label="글자 크게">가+</button></span></div></header>
 <div class="body">{a['html']}</div>
-<p class="byl">{esc(a['author'])} <a href="mailto:{EMAIL}">{EMAIL}</a></p>
+<p class="byl">{esc(a['author'])} {byline_email}</p>
 <p class="cr">저작권자 © 뉴스더힐 무단전재 및 재배포 금지</p>
 <p class="share"><a href="mailto:?subject={esc(a['title'])}&amp;body={SITE}{a['url']}">메일 공유</a></p>
 </article>
