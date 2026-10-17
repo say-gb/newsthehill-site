@@ -79,10 +79,10 @@
       "id": "sample-column-kj",
       "type": "recommend",
       "advertiser": "뉴스더힐",
-      "img": "/static/banners/sample-column-160x600.jpg",
+      "img": "/static/banners/rec-column-160x200.png",
       "href": "/section/opinion/",
       "w": 160,
-      "h": 600,
+      "h": 200,
       "keywords": [
         "칼럼",
         "마케팅",
