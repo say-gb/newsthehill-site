@@ -1,0 +1,26 @@
+/* 머리 영역에만 적용하는 작은 움직임. style.css 다음에 로드. */
+.ticker{--tk-height:30px;display:block}
+.ticker .tk-window{flex:1;min-width:0;height:var(--tk-height);overflow:hidden}
+.ticker ul{height:auto;transition:none}
+.tk-js .ticker ul{transition:transform .45s ease}
+.ticker li{height:var(--tk-height);line-height:var(--tk-height)}
+.ticker li a{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ticker .tk-t{color:var(--meta);font-size:12px;margin-right:8px;font-variant-numeric:tabular-nums}
+.ticker b::before{content:"";display:inline-block;width:6px;height:6px;margin-right:6px;border-radius:50%;background:var(--red);vertical-align:middle;animation:tk-dot 2.4s ease-in-out infinite}
+.ticker .tk-toggle{display:none;flex:none;width:28px;height:26px;margin-left:8px;padding:0;border:1px solid var(--ln);background:#fff;color:var(--t2);font:11px var(--sans);cursor:pointer}
+.tk-js .ticker .tk-toggle{display:block}
+.ticker .tk-toggle[hidden]{display:none}
+.ticker a:focus-visible,.ticker .tk-toggle:focus-visible{outline:2px solid var(--g);outline-offset:-2px}
+@keyframes tk-dot{0%,100%{opacity:1}50%{opacity:.25}}
+@media(max-width:767px){
+ .ticker{display:block;--tk-height:34px}
+ .ticker .wrap{height:34px}
+ .ticker b{margin-right:8px;padding-right:8px}
+ .ticker li{font-size:13px}
+}
+@media(max-width:480px){.ticker .tk-t{display:none}}
+@media(prefers-reduced-motion:reduce){
+ .tk-js .ticker ul{transition:none}
+ .ticker b::before{animation:none}
+ .tk-js .ticker .tk-toggle{display:none}
+}

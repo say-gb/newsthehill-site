@@ -102,7 +102,12 @@ LOGO = """<a class="logo" href="/" aria-label="뉴스더힐 홈"><!-- 원본 로
 
 def header(active, arts):
     menu = "".join(f'<a href="/section/{k}/"{" class=on" if k == active else ""}>{v}</a>' for k, v in SECTIONS.items())
-    tick = "".join(f'<li><a href="{a["url"]}">{esc(a["title"])}</a></li>' for a in arts[:6])
+    ticker_arts = [a for a in arts if not any(word in a["title"] for word in ("낭만클럽", "낭만호랑", "더에이블", "광고"))][:6]
+    tick = "".join(
+        f'<li{' aria-hidden="true"' if i else ""}><a href="{esc(a["url"])}"{' tabindex="-1" aria-hidden="true"' if i else ""}>'
+        f'<span class="tk-t">{a["dt"]:%m.%d}{esc(" " + a["time"]) if a.get("time") else ""}</span> {esc(a["title"])}</a></li>'
+        for i, a in enumerate(ticker_arts)
+    )
     return f"""<header class="hd">
 <div class="mast"><div class="wrap">
 <p class="date"><span id="today">{today()}</span><span id="wx" class="wx"></span></p>
@@ -111,7 +116,7 @@ def header(active, arts):
 <button class="ham" type="button" aria-label="전체메뉴"><svg viewBox="0 0 20 20" width="20" height="20"><path d="M2 5h16M2 10h16M2 15h16" stroke="currentColor" stroke-width="2"/></svg></button></div>
 </div></div>
 <nav class="gnb" aria-label="주메뉴"><div class="wrap">{menu}</div></nav>
-<div class="ticker"><div class="wrap"><b>최신</b><ul id="tick">{tick}</ul></div></div>
+<div class="ticker" role="region" aria-label="최신 기사"><div class="wrap"><b>최신</b><div class="tk-window"><ul id="tick" aria-live="off">{tick}</ul></div><button class="tk-toggle" type="button" aria-label="최신 기사 자동 넘김 정지" aria-pressed="false">❚❚</button></div></div>
 </header>"""
 
 FOOTER = f"""<footer class="foot">
@@ -128,14 +133,14 @@ FOOTER = f"""<footer class="foot">
 </footer>"""
 
 SCRIPT = """<script>
-(function(){var u=document.getElementById('tick');if(u&&u.children.length>1){var i=0;setInterval(function(){i=(i+1)%u.children.length;u.style.transform='translateY(-'+(i*30)+'px)'},4000)}
+(function(){
 var W=['일','월','화','수','목','금','토'],n=new Date(),t=document.getElementById('today');if(t)t.textContent=n.getFullYear()+'년 '+(n.getMonth()+1)+'월 '+n.getDate()+'일('+W[n.getDay()]+')';
 var C={0:'맑음',1:'대체로 맑음',2:'구름 조금',3:'흐림',45:'안개',48:'안개',51:'이슬비',53:'이슬비',55:'이슬비',61:'비',63:'비',65:'강한 비',71:'눈',73:'눈',75:'많은 눈',80:'소나기',81:'소나기',82:'강한 소나기',95:'뇌우'};
 fetch('https://api.open-meteo.com/v1/forecast?latitude=37.48&longitude=127.14&current=temperature_2m,weather_code&timezone=Asia%2FSeoul').then(function(r){return r.json()}).then(function(j){var c=j.current;document.getElementById('wx').textContent='송파 '+(C[c.weather_code]||'')+' '+Math.round(c.temperature_2m)+'℃'}).catch(function(){});
 document.querySelectorAll('.fs button').forEach(function(b){b.onclick=function(){var x=document.querySelector('.body');var s=parseFloat(getComputedStyle(x).fontSize)+(b.dataset.d==='+'?1:-1);x.style.fontSize=Math.max(14,Math.min(24,s))+'px'}});
 var f=document.querySelector('.srch');if(f)f.addEventListener('submit',function(e){var i=f.querySelector('input[name=q]');if(getComputedStyle(i).display==='none'||!i.value){e.preventDefault();f.classList.add('open');i.focus()}});
 var h=document.querySelector('.ham');if(h)h.onclick=function(){document.documentElement.classList.toggle('menu-open')};})();
-</script><script src="/static/js/blankfill.js" data-banners="/static/banners/banners.json" defer></script>"""
+</script><script src="/static/js/blankfill.js" data-banners="/static/banners/banners.json" defer></script><script src="/static/js/ticker.js" defer></script>"""
 
 def page(title, body, desc=TAGLINE, url="/", image="/static/og-default.jpg", active="", ogtype="website", arts=(), keywords=""):
     full = f"{title} - {NAME}" if title else f"{NAME} - {TAGLINE}"
@@ -149,7 +154,7 @@ def page(title, body, desc=TAGLINE, url="/", image="/static/og-default.jpg", act
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;900&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
-<link rel="alternate" type="application/rss+xml" title="{NAME}" href="/rss.xml"><link rel="stylesheet" href="/static/style.css">
+<link rel="alternate" type="application/rss+xml" title="{NAME}" href="/rss.xml"><link rel="stylesheet" href="/static/style.css"><link rel="stylesheet" href="/static/css/motion.css">
 </head><body>
 {header(active, arts)}
 <main class="wrap">{body}</main>
