@@ -153,9 +153,17 @@
     fill(a, slot.c);
     document.body.appendChild(a);
     // 후보가 더 있으면 일정 시간마다 순차 표시(로테이션)
-    var pool = [slot.c].concat(slot.rest.filter(function (o) { return o.w === slot.c.w && o.h === slot.c.h; })), k = 0;
-    if (pool.length > 1) timers.push(setInterval(function () { k = (k + 1) % pool.length; fill(a, pool[k]); }, (cfg.rotate_sec || 30) * 1000));
-    state.placed.push({ id: slot.c.b.id, x: Math.round(slot.x), y: Math.round(slot.y), w: slot.c.w, h: slot.c.h, score: +slot.c.score.toFixed(3) });
+    var pool = [slot.c].concat(slot.rest.filter(function (o) { return o.w === slot.c.w && o.h === slot.c.h; }));
+    var entry = { id: slot.c.b.id, x: Math.round(slot.x), y: Math.round(slot.y), w: slot.c.w, h: slot.c.h, score: +slot.c.score.toFixed(3) };
+    state.placed.push(entry);
+    if (pool.length > 1) timers.push(setInterval(function () {
+      var used = state.placed.filter(function (o) { return o !== entry; }).map(function (o) { return o.id; });
+      var available = pool.filter(function (o) { return o.b.id === entry.id || used.indexOf(o.b.id) < 0; });
+      if (available.length < 2) return;
+      var k = available.findIndex(function (o) { return o.b.id === entry.id; });
+      var next = available[(k + 1) % available.length];
+      fill(a, next); entry.id = next.b.id;
+    }, (cfg.rotate_sec || 30) * 1000));
     return a;
   }
   function fill(a, c) {
@@ -164,7 +172,7 @@
     var noLabel = b.type === "ad" && b.img_label;
     a.setAttribute("aria-label", b.type === "ad" ? "광고" : "추천");
     a.innerHTML = '<div class="bf-lab' + (noLabel ? ' nolab' : '') + '">' + (noLabel ? "" : (b.type === "ad" ? "광고" : "추천")) +
-      '<button type="button" aria-label="닫기">×</button></div><a href="' + href + '"><img src="' + b.img + '" width="' + c.w + '" height="' + c.h +
+      '<button type="button" aria-label="닫기">×</button></div><a href="' + href + '"' + (b.type === "ad" ? ' rel="sponsored nofollow noopener"' : '') + '><img src="' + b.img + '" width="' + c.w + '" height="' + c.h +
       '" alt="' + (b.type === "ad" ? "광고: " : "") + (b.advertiser || "") + " 배너" + '"></a>';
     a.querySelector("button").onclick = function () { sessionStorage.setItem("nth_bf_closed", "1"); closed = true; run(); };
   }

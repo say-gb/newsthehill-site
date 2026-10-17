@@ -1,5 +1,5 @@
 {
-  "_note": "광고 배너 3개(어반에이블·어썸에이치·낭만클럽, 교수님 2026-10-17 14:18). 모두 type ad, 슬롯에 광고 라벨. 기사 페이지(/articles/) 제외. 추천(뉴스더힐 칼럼)은 자체 콘텐츠로 광고 아님. 어썸에이치는 실제 링크 확정 전까지 비활성(이미지 파일은 보관, 2026-10-17 15:24). 이미지 안에 '광고' 표시가 있으면 슬롯 머리 '광고' 글자를 생략(img_label).",
+  "_note": "광고 배너 3개(어반에이블·어썸에이치·낭만클럽, 교수님 2026-10-17 14:18). 모두 type ad, 슬롯에 광고 라벨. 기사 페이지(/articles/) 제외. 추천(뉴스더힐 칼럼)은 자체 콘텐츠로 광고 아님. 어썸에이치는 실제 링크 확정 전까지 비활성(이미지 파일은 보관, 2026-10-17 15:24). 이미지 안에 '광고' 표시가 있으면 슬롯 머리 '광고' 글자를 생략(img_label). 낭만클럽 광고는 교수님 요청(2026-10-17 22:15)으로 priority 102 — 키워드 점수(최대 1)와 관계없이 PC 옆 첫 칸·모바일 300x250 칸에 먼저 나옴. 추천(sample-column-kj, 최경집 교수의 현장 마케팅 노트)은 교수님 결정(2026-10-17 22:36)으로 비활성 — 나중에 SNS 기획 인터뷰 기사가 나오면 그 추천으로 바꿈(이미지 파일은 보관).",
   "x": 0.5,
   "rotate_sec": 30,
   "min_blank": {
@@ -53,7 +53,7 @@
       "exclude_paths": [
         "/articles/"
       ],
-      "priority": 2,
+      "priority": 102,
       "start": "2026-10-01",
       "end": "2026-12-31",
       "img_label": true
@@ -70,19 +70,20 @@
       "exclude_paths": [
         "/articles/"
       ],
-      "priority": 2,
+      "priority": 102,
       "start": "2026-10-01",
       "end": "2026-12-31",
       "img_label": true
     },
     {
       "id": "sample-column-kj",
+      "active": false,
       "type": "recommend",
       "advertiser": "뉴스더힐",
-      "img": "/static/banners/sample-column-160x600.jpg",
+      "img": "/static/banners/rec-column-160x200.png",
       "href": "/section/opinion/",
       "w": 160,
-      "h": 600,
+      "h": 200,
       "keywords": [
         "칼럼",
         "마케팅",
