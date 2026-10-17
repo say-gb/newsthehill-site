@@ -50,6 +50,8 @@ def md(text):
             kind = "ol" if m.group(1) else "ul"
             if not lst or lst[0] != kind: flush(); lst = (kind, [])
             lst[1].append(m.group(2)); continue
+        m = re.match(r"!\[(.*?)\]\((\S+?)\)$", l)
+        if m: flush(); out.append(f'<figure><img src="{esc(m.group(2))}" alt="{esc(m.group(1))}" loading="lazy"></figure>'); continue
         if l.startswith(">"): flush(); out.append("<blockquote>" + inline(l.lstrip("> ")) + "</blockquote>"); continue
         if lst: flush()
         para.append(l)

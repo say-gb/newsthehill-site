@@ -36,3 +36,5 @@ main{padding:18px 16px 40px}
 .foot{background:var(--navy);color:#d9d4c4;font-size:13px;line-height:1.7;padding:26px 0 30px;text-align:center}
 .foot a{color:var(--gold)}.foot b{color:#fff}.foot .seal{width:72px;margin:0 auto 10px}.foot p{margin:4px 0}.copy{color:#9a96a8}
 @media(min-width:760px){.grid{grid-template-columns:repeat(3,1fr)}.wm{font-size:44px}.tabs{justify-content:center}.tabs a{flex:0 0 auto}.colband{grid-template-columns:220px 1fr}.post{padding:36px 48px}.post h1{font-size:32px}}
+
+.article figure,figure{margin:1.2em 0;text-align:center}figure img{max-width:100%;height:auto}
