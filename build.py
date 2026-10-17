@@ -107,12 +107,22 @@ def load_ticker_blocklist():
         return ["낭만클럽", "낭만호랑", "더에이블", "광고"]
     return [line for raw in lines if (line := raw.strip()) and not line.startswith("#")]
 
+def load_ticker_exclude():
+    try:
+        lines = (ROOT / "config" / "ticker_exclude.txt").read_text(encoding="utf-8").splitlines()
+    except FileNotFoundError:
+        return set()
+    return {line.strip("/").removeprefix("articles/")
+            for raw in lines if (line := raw.strip()) and not line.startswith("#")}
+
 def ticker_pick(arts):
-    """티커는 머리기사 영역(머리기사+아래 3편)과 최신기사 목록에 없는 편집국·기자 기사만, 최대 6편, 없으면 숨김."""
+    """티커는 머리기사 영역(머리기사+아래 3편)과 최신기사 목록에 없는 편집국·기자 기사 중 config/ticker_exclude.txt의 슬러그를 제외해 최대 6편, 없으면 숨김."""
     blocklist = load_ticker_blocklist()
+    exclude = load_ticker_exclude()
     used = ticker_excluded_urls(arts)
     eligible = [a for a in arts
                 if not any(word in a["title"] for word in blocklist)
+                and a["slug"] not in exclude
                 and a["column"] is False and a["section"] != "opinion"
                 and a["url"] not in used]
     return sorted(eligible, key=lambda a: (a["dt"], a.get("time", ""), a["slug"]), reverse=True)[:6]
@@ -134,7 +144,7 @@ def header(active, arts):
         f'<span class="tk-t">{a["dt"]:%m.%d}{esc(" " + a["time"]) if a.get("time") else ""}</span> {esc(a["title"])}</a></li>'
         for i, a in enumerate(ticker_arts)
     )
-    ticker = f'''<div class="ticker" role="region" aria-label="최신 기사"><div class="wrap"><b>최신</b><div class="tk-window"><ul id="tick" aria-live="off">{tick}</ul></div><button class="tk-toggle" type="button" aria-label="최신 기사 자동 넘김 일시정지/재생" aria-pressed="false" title="자동 넘김 일시정지/재생"><span aria-hidden="true">❚❚</span></button></div></div>''' if ticker_arts else ""
+    ticker = f'''<div class="ticker" role="region" aria-label="뉴스"><div class="wrap"><b>뉴스</b><div class="tk-window"><ul id="tick" aria-live="off">{tick}</ul></div><button class="tk-toggle" type="button" aria-label="뉴스 자동 넘김 일시정지/재생" aria-pressed="false" title="자동 넘김 일시정지/재생"><span aria-hidden="true">❚❚</span></button></div></div>''' if ticker_arts else ""
     return f"""<header class="hd">
 <div class="mast"><div class="wrap">
 <p class="date"><span id="today">{today()}</span><span id="wx" class="wx"></span></p>
