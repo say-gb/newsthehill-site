@@ -2,7 +2,7 @@
 title: 우리 동네 시장 사장님에게 묻다
 subtitle: 창간호 인터뷰 (섭외 중)
 section: people
-author: 뉴스더힐 편집국
+author: 최만수
 date: 2026-10-19
 slug: market-interview
 draft: true
