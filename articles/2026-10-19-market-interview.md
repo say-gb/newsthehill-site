@@ -1,7 +1,7 @@
 ---
 title: 우리 동네 시장 사장님에게 묻다
 subtitle: 창간호 인터뷰 (섭외 중)
-section: local
+section: interview
 author: 최만수
 date: 2026-10-19
 slug: market-interview
