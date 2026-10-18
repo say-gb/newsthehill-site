@@ -24,7 +24,7 @@
   function measure() {
     var out = [], sx = window.scrollX, sy = window.scrollY;
     document.querySelectorAll(SEL).forEach(function (el) {
-      if (el.closest(".nth-blank-slot")) return;
+      if (el.closest(".nth-blank-slot") || el.closest(".tk-window")) return;   // 티커 목록(위로 넘기는 숨은 줄)은 .ticker 한 줄로만 잼
       var cs = getComputedStyle(el);
       if (cs.visibility === "hidden" || cs.display === "none" || +cs.opacity === 0) return; // 무효 구성요소 제외
       var r = el.getBoundingClientRect();
@@ -76,24 +76,30 @@
 
   /* ---------- 3단계: 작은 블랭크 여러 개 → 구성요소 재배열로 병합 ---------- */
   function mergeIfNeeded(blanks) {
-    var small = blanks.filter(function (b) { return b.small && b.side !== "inline" && b.w >= 8; });
+    // 10/18 11:04 교수님: PC(≥1024)에서는 좌·우 여백 크기와 관계없이 늘 오른쪽 한 줄기로 모으고, 본문+줄기 덩어리를 가운데에 둠
+    var small = blanks.filter(function (b) { return b.side !== "inline" && b.w >= 8; });
     var root = document.documentElement;
-    if (window.innerWidth < MIN_VIEW || small.length < 2) return false;
+    if (window.innerWidth < MIN_VIEW || !small.length) return false;
+    if (!candidates({ w: 9999, h: 9999 }).length) return false;   // 이 페이지에 낼 배너가 없으면(기사 페이지 등) 본문을 옮기지 않음
     var total = small.reduce(function (s, b) { return s + b.w; }, 0);
     // 본문 컨테이너(.wrap)를 왼쪽으로 붙여 좌·우 여백을 오른쪽 한 줄기로 모음 (특허 도 6)
     var LEFT = 8;
-    root.style.setProperty("--bf-left", LEFT + "px");
     // 합친 줄기가 가장 좁은 배너보다 작으면 본문 폭을 줄여 블랭크를 확대 (종속항 9·18, 도 9)
     var minW = Math.min.apply(null, cfg.banners.map(function (b) { return b.w; })) + GAP * 2;
-    var wrap = document.querySelector(".wrap"), ww = wrap ? wrap.getBoundingClientRect().width : 0;
+    var wrap = document.querySelector("main.wrap") || document.querySelector(".wrap"), ww = wrap ? wrap.getBoundingClientRect().width : 0;
     var vw = document.documentElement.clientWidth;
-    if (vw - LEFT - ww < minW) {
-      var nw = vw - LEFT - minW;
+    if (vw - LEFT * 2 - ww < minW) {                       // 양쪽 바깥 여백 LEFT를 같게 남김
+      var nw = vw - LEFT * 2 - minW;
       if (nw < 800) return false;                         // 너무 줄어들면 하지 않음
       root.style.setProperty("--bf-wrap", nw + "px");
+      ww = nw;
     }
+    // 본문+옆 광고 줄기를 한 덩어리로 화면 가운데에 둠(교수님 10/18 11:04). 머리 영역 폭도 이 덩어리에 맞춤(--bf-block)
+    LEFT = Math.max(LEFT, Math.floor((vw - ww - minW) / 2));
+    root.style.setProperty("--bf-left", LEFT + "px");
+    root.style.setProperty("--bf-block", (ww + minW) + "px");
     root.classList.add("bf-merged");
-    state.merged = { from: small.length, total: Math.round(total) };
+    state.merged = { from: small.length, total: Math.round(total), strip: minW };
     log("merged", small.length, "blanks", total, "px →", vw - LEFT - (parseFloat(root.style.getPropertyValue("--bf-wrap")) || ww), "px");
     return true;
   }
@@ -137,7 +143,10 @@
       if (used[c.b.id] || window.__bfUsed[c.b.id] || y + c.h > blank.y + blank.h) continue;
       if (blank.el && out.length) break;
       if (blank.el && (c.w !== blank.w || c.h !== blank.h)) continue;   // 예약칸은 크기 정확히 일치
-      out.push({ x: blank.x + (blank.w - c.w) / 2, y: y, c: c, el: blank.el, rest: cands.filter(function (o) { return o !== c; }) });
+      var mw = document.querySelector("main.wrap");
+      var bx = (state.merged && blank.side === "right" && mw) ? mw.getBoundingClientRect().right + scrollX + GAP   // 병합 줄기는 본문 칸 바로 옆(오른쪽 끝이 머리 영역 검색창 끝과 맞음)
+        : blank.x + (blank.w - c.w) / 2;
+      out.push({ x: bx, y: y, c: c, el: blank.el, rest: cands.filter(function (o) { return o !== c; }) });
       used[c.b.id] = 1; window.__bfUsed[c.b.id] = 1; y += c.h + GAP * 2;
     }
     return out;
@@ -182,6 +191,7 @@
     timers.forEach(clearInterval); timers = [];
     document.documentElement.classList.remove("bf-merged");
     document.documentElement.style.removeProperty("--bf-wrap");
+    document.documentElement.style.removeProperty("--bf-block");
     document.querySelectorAll("[data-bf-slot]").forEach(function (e) { e.classList.remove("filled", "bf-empty"); });
     state.merged = false; state.placed = [];
   }
@@ -197,7 +207,11 @@
     var narrow = window.innerWidth < 1024;                    // 모바일: 여백 줄기 없음 → 본문 예약칸만
     var blanks = scan(measure());
     if (narrow) blanks = blanks.filter(function (b) { return b.el; });
-    else if (mergeIfNeeded(blanks)) blanks = scan(measure()); // 재배열 후 다시 스캔
+    else if (mergeIfNeeded(blanks)) {                          // 재배열 후 다시 스캔
+      blanks = scan(measure())
+        .filter(function (b) { return b.side !== "left"; })      // 왼쪽 여백은 쓰지 않음(덩어리 가운데 유지)
+        .map(function (b) { if (b.side === "right") { b.w = Math.min(b.w, state.merged.strip); b.small = b.w < (cfg.min_blank || { w: 120 }).w; } return b; });
+    }
     state.blanks = blanks;
     blanks.filter(function (b) { return !b.small; }).sort(function (a, b) { return (b.el ? 1 : 0) - (a.el ? 1 : 0); }).forEach(function (b) {
       split(b, candidates(b)).forEach(function (s) { slots.push(render(s)); });
