@@ -17,7 +17,7 @@ SITE = "https://newsthehill.com"
 NAME = "뉴스더힐"
 TAGLINE = "높은 시선으로 세상을, 깊은 취재로 진실을"
 SECTIONS = {  # slug: 이름 (하단 탭 순서)
-    "food": "식품·유통", "local": "지역", "people": "사람들",
+    "food": "식품·유통", "local": "지역·행사", "interview": "인터뷰",
     "opinion": "오피니언", "feature": "기획·이슈",
 }
 COLUMN_HEADER = "/static/column-header-sisun.jpg"
@@ -314,7 +314,9 @@ def home_selection(arts):
     for k, v in SECTIONS.items():
         if k == "opinion": continue
         sa = [a for a in arts if a["section"] == k]
-        if not sa: continue
+        if not sa:
+            if k == "interview": blocks.append((k, v, None, []))
+            continue
         first = next((a for a in sa if a.get("thumb") and id(a) not in used), next((a for a in sa if id(a) not in used), sa[0]))
         others = [a for a in sa if a is not first][:3]
         blocks.append((k, v, first, others))
@@ -347,7 +349,8 @@ def build():
     latest = f'<section class="h-latest">{boxh("최신기사", "/section/all/")}<ul class="tline">{"".join(timeline(a) for a in selected["latest"])}</ul></section>'
     blocks = ""
     for k, v, first, others in selected["blocks"]:
-        blocks += f'<section class="sec">{boxh("■ " + v, f"/section/{k}/")}<ul class="first">{row(first)}</ul><ul class="tl">{"".join(tline(a) for a in others)}</ul></section>'
+        lead = row(first) if first else f'<li class="empty"><span>{v} 기사를 준비하고 있습니다.</span></li>'
+        blocks += f'<section class="sec">{boxh("■ " + v, f"/section/{k}/")}<ul class="first">{lead}</ul><ul class="tl">{"".join(tline(a) for a in others)}</ul></section>'
     photos = selected["photos"]
     strip = f'<section class="h-photo">{boxh("포토뉴스")}<div>' + "".join(f'<a href="{a["url"]}">{thumb(a)}<span>{esc(a["title"])}</span></a>' for a in photos) + "</div></section>"
     more = f'<section class="h-more">{boxh("뉴스 더보기", "/section/all/")}<ul class="rows">{"".join(row(a) for a in selected["more"])}</ul></section>'
@@ -360,10 +363,10 @@ def build():
         body = f"""<div class="cols"><div class="mainc"><p class="crumb"><a href="/">홈</a> &gt; <b>{v}</b></p>
 <h1 class="sech">{v}<small>총 {len(sa)}건</small></h1><ul class="rows list">{lst}</ul></div>{sidebar(arts)}</div>"""
         write(f"/section/{k}/", page(v, body, url=f"/section/{k}/", active=k, arts=arts, keywords=f"뉴스더힐,{v}"))
-    for old, target in (("distribution", "food"), ("market", "food"), ("editorial", "opinion"), ("column", "opinion")):
+    for old, target in (("distribution", "food"), ("market", "food"), ("editorial", "opinion"), ("column", "opinion"), ("people", "interview")):
         url = f"/section/{target}/"
         name = SECTIONS[target]
-        write(f"/section/{old}/", f'<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0; url={url}"><link rel="canonical" href="{SITE}{url}"><title>{name} - 뉴스더힐</title></head><body><a href="{url}">{name} 섹션으로 이동</a></body></html>')
+        write(f"/section/{old}/", f'<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0; url={url}"><link rel="canonical" href="{SITE}{url}"><title>{name} - 뉴스더힐</title><script>location.replace("{url}" + location.search + location.hash)</script></head><body><a href="{url}">{name} 섹션으로 이동</a></body></html>')
     # ── 기사
     for a in arts:
         same = [x for x in arts if x["section"] == a["section"] and x is not a][:6]
