@@ -6,7 +6,6 @@ kind: 칼럼
 author: 최경집
 date: 2026-10-19
 slug: why-market-table
-draft: true
 column: true
 ---
 
