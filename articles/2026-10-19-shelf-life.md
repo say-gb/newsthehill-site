@@ -2,7 +2,7 @@
 title: 유통기한 대신 소비기한, 장바구니에서 무엇이 달라졌나
 subtitle: '팔 수 있는 날'에서 '먹을 수 있는 날'로
 section: food
-author: 뉴스더힐 편집국
+author: 최만수
 date: 2026-10-19
 display_date: [예시] 0000.00.00 00:00
 slug: shelf-life

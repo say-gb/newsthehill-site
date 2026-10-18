@@ -2,7 +2,7 @@
 title: 작은 식품 브랜드가 OEM을 고를 때 확인할 것
 subtitle: 위탁생산 계약부터 표시 책임까지
 section: feature
-author: 뉴스더힐 편집국
+author: 최만수
 date: 2026-10-19
 display_date: [예시] 0000.00.00 00:00
 slug: oem-checklist
