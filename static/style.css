@@ -12,6 +12,9 @@ html.bf-merged .wrap{margin-left:var(--bf-left,8px);margin-right:auto}
 .m{display:block;font:normal 12px/1.4 var(--sans);color:var(--meta);margin-top:5px}.m i{font-style:normal;color:#ccc;margin:0 6px}
 /* 마스트헤드 */
 .mast .wrap{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding-top:18px;padding-bottom:16px}
+/* 제호 가운데(교수님 10/18 10:23): 옆 광고 정렬(bf-merged)과 관계없이 머리 영역은 화면 가운데 */
+html.bf-merged .hd .wrap{margin-left:auto;margin-right:auto}
+.date{justify-self:start}.logo{justify-self:center}
 .date{font-size:12px;color:#555}.wx:not(:empty):before{content:"·";margin:0 6px;color:#999}
 .logo{background:#283043;padding:0;display:block;line-height:0}
 .logo img{display:block;height:64px;width:auto}
@@ -130,8 +133,9 @@ figcaption{font-size:13.5px;color:#666;line-height:1.5;margin-top:8px;padding:0 
 /* 모바일 */
 @media(max-width:767px){
  body{font-size:15px}.wrap{padding:0 14px}
- .mast .wrap{grid-template-columns:1fr auto;grid-template-areas:"date date" "logo tools";padding:6px 14px 8px;row-gap:4px}
- .date{grid-area:date;border-bottom:1px solid var(--ln2);padding-bottom:5px}.logo{grid-area:logo;align-items:flex-start}.tools{grid-area:tools}
+ .mast .wrap{grid-template-columns:1fr auto 1fr;grid-template-areas:"date date date" "ham logo srch";padding:6px 14px 8px;row-gap:4px;position:relative}
+ .date{grid-area:date;justify-self:stretch;text-align:center;border-bottom:1px solid var(--ln2);padding-bottom:5px}.logo{grid-area:logo;justify-self:center}
+ .tools{display:contents}.ham{grid-area:ham;justify-self:start;padding:6px 6px 6px 0}.srch{grid-area:srch;justify-self:end}
  .logo img{height:40px}
  .srch input{display:none}.srch{border:0}.ham{display:flex}
  .gnb .wrap{justify-content:flex-start;padding:0 4px}.gnb a{font-size:15px;line-height:42px;padding:0 12px}
@@ -157,7 +161,7 @@ figcaption{font-size:13.5px;color:#666;line-height:1.5;margin-top:8px;padding:0 
  .fmenu a{padding:9px 0;margin-right:14px}
 }
 html.menu-open .gnb .wrap{flex-wrap:wrap}
-@media(max-width:767px){.srch.open input{display:block;width:150px;padding:5px 8px;border:1px solid #bbb}}
+@media(max-width:767px){.srch.open input{display:block;width:150px;padding:5px 8px;border:1px solid #bbb;position:absolute;right:14px;top:100%;z-index:5;box-shadow:0 2px 6px rgba(0,0,0,.12)}}
 .okick{display:inline-block;font:700 12px/1 var(--sans);color:var(--g);border:1px solid var(--g);padding:3px 6px;margin:0 0 6px;vertical-align:middle}
 .row .okick{margin:0 0 4px}
 .ah .okick{margin-bottom:10px}
