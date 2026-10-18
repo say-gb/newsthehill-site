@@ -17,7 +17,7 @@ SITE = "https://newsthehill.com"
 NAME = "뉴스더힐"
 TAGLINE = "높은 시선으로 세상을, 깊은 취재로 진실을"
 SECTIONS = {  # slug: 이름 (하단 탭 순서)
-    "food": "식품·유통", "local": "지역·행사", "interview": "인터뷰",
+    "food": "식품·유통", "local": "사회·문화", "interview": "인터뷰",
     "opinion": "오피니언", "feature": "기획·이슈",
 }
 COLUMN_HEADER = "/static/column-header-sisun.jpg"
