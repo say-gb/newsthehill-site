@@ -236,7 +236,7 @@ def rank(arts, cur=None, n=10, skip=8, *, picked=None):
 
 def columnists_pick(arts):
     return [last for _, _, author, _ in COLUMNISTS
-            if (last := next((a for a in arts if a["author"] == author), None)) is not None]
+            if (last := next((a for a in arts if a["author"] == author and a["column"]), None)) is not None]
 
 def columnists(arts, *, picked=None):
     last_by_author = {a["author"]: a for a in (columnists_pick(arts) if picked is None else picked)}
@@ -251,8 +251,9 @@ def sidebar(arts, cur=None):
     return f'<aside class="side">{rank(arts, cur)}{ADSLOT}{columnists(arts)}</aside>'
 
 def colbox_pick(arts):
-    c = next((a for a in arts if a["author"] == "최경집"), None)
-    others = [a for a in arts if a["author"] == "최경집" and a is not c][:3] if c else []
+    mine = [a for a in arts if a["author"] == "최경집" and a["column"]]  # 칼럼만(교수님이 쓴 인터뷰·기사는 제외)
+    c = mine[0] if mine else None
+    others = mine[1:4]
     return c, others
 
 def colbox(arts, *, picked=None):  # 「최경집 교수의 시선」 아이보리 박스
