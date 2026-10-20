@@ -21,6 +21,9 @@ SECTIONS = {  # slug: 이름 (하단 탭 순서)
     "opinion": "오피니언", "feature": "기획·이슈",
 }
 COLUMN_HEADER = "/static/column-header-sisun.jpg"
+SUBCATS = {  # 섹션 안 세부 분류: front matter 'category' 값 → 하위 경로
+    "interview": {"public": "공인", "smallbiz": "소상공인"},
+}
 
 def esc(s): return html.escape(str(s), quote=True)
 
@@ -77,6 +80,11 @@ def load():
         meta["url"] = f"/articles/{meta['slug']}/"
         meta["column"] = meta.get("column", "").lower() == "true" or (meta["section"] == "opinion" and meta.get("kind") in ("칼럼", "기고"))
         meta["kicker"] = meta.get("kind", "") if meta["section"] == "opinion" else ""
+        cats = SUBCATS.get(meta["section"], {})
+        if meta.get("category"):
+            if meta["category"] not in cats.values(): raise SystemExit(f"{f}: 알 수 없는 category {meta['category']} (가능: {', '.join(cats.values())})")
+            meta["kicker"] = meta["category"]
+            meta["cat_slug"] = next(k for k, v in cats.items() if v == meta["category"])
         arts.append(meta)
     arts.sort(key=lambda a: (a["dt"], a.get("time", ""), a["slug"]), reverse=True)
     return arts
@@ -359,10 +367,21 @@ def build():
     # ── 섹션 (+ 전체기사)
     for k, v in list(SECTIONS.items()) + [("all", "전체기사")]:
         sa = arts if k == "all" else [a for a in arts if a["section"] == k]
-        lst = "".join(row(a) for a in sa) or f'<li class="empty"><b>준비 중입니다</b><span>{v} 기사를 준비하고 있습니다. 곧 찾아뵙겠습니다.</span></li>'
-        body = f"""<div class="cols"><div class="mainc"><p class="crumb"><a href="/">홈</a> &gt; <b>{v}</b></p>
-<h1 class="sech">{v}<small>총 {len(sa)}건</small></h1><ul class="rows list">{lst}</ul></div>{sidebar(arts)}</div>"""
-        write(f"/section/{k}/", page(v, body, url=f"/section/{k}/", active=k, arts=arts, keywords=f"뉴스더힐,{v}"))
+        cats = SUBCATS.get(k, {})
+        for ck, cv in [(None, None)] + list(cats.items()):
+            ca = sa if ck is None else [a for a in sa if a.get("cat_slug") == ck]
+            label = v if ck is None else cv
+            lst = "".join(row(a) for a in ca) or f'<li class="empty"><b>준비 중입니다</b><span>{label} 기사를 준비하고 있습니다. 곧 찾아뵙겠습니다.</span></li>'
+            tabs = ""
+            if cats:
+                tabs = '<nav class="subtabs" aria-label="' + esc(v) + ' 분류">' + "".join(
+                    f'<a href="/section/{k}/{(x + "/") if x else ""}"{" class=on aria-current=page" if x == ck else ""}>{esc(n)}</a>'
+                    for x, n in [(None, "전체")] + list(cats.items())) + "</nav>"
+            crumb = f'<a href="/">홈</a> &gt; <b>{v}</b>' if ck is None else f'<a href="/">홈</a> &gt; <a href="/section/{k}/">{v}</a> &gt; <b>{cv}</b>'
+            url = f"/section/{k}/" + (f"{ck}/" if ck else "")
+            body = f"""<div class="cols"><div class="mainc"><p class="crumb">{crumb}</p>
+<h1 class="sech">{label}<small>총 {len(ca)}건</small></h1>{tabs}<ul class="rows list">{lst}</ul></div>{sidebar(arts)}</div>"""
+            write(url, page(label if ck is None else f"{cv} {v}", body, url=url, active=k, arts=arts, keywords=f"뉴스더힐,{v}" + (f",{cv}" if cv else "")))
     for old, target in (("distribution", "food"), ("market", "food"), ("editorial", "opinion"), ("column", "opinion"), ("people", "interview")):
         url = f"/section/{target}/"
         name = SECTIONS[target]
@@ -376,7 +395,7 @@ def build():
         kicker = esc(a["kicker"])
         kicker_label = f'<p class="okick">{kicker}</p>' if kicker else ""
         body = f"""<div class="cols"><div class="mainc"><article class="post">
-<p class="crumb"><a href="/">홈</a> &gt; <a href="/section/{a['section']}/">{secname(a)}</a></p>
+<p class="crumb"><a href="/">홈</a> &gt; <a href="/section/{a['section']}/">{secname(a)}</a>{f' &gt; <a href="/section/{a["section"]}/{a["cat_slug"]}/">{esc(a["category"])}</a>' if a.get("cat_slug") else ''}</p>
 <header class="ah">{kicker_label}<h1>{esc(a['title'])}</h1>{f'<p class="sub">{esc(a["subtitle"])}</p>' if a.get('subtitle') else ''}
 <div class="info"><ul><li>기자명 <b>{esc(a['author'])}</b></li><li>입력 {dt(a)}</li>{('<li>수정 ' + esc(a['updated']) + '</li>') if a.get('updated') else ''}</ul>
 <span class="fs"><button type="button" data-d="-" aria-label="글자 작게">가-</button><button type="button" data-d="+" aria-label="글자 크게">가+</button></span></div></header>
@@ -398,7 +417,7 @@ def build():
     items = "".join(f"<item><title>{esc(a['title'])}</title><link>{SITE}{a['url']}</link><guid>{SITE}{a['url']}</guid><pubDate>{format_datetime(a['dt'].replace(hour=9))}</pubDate><description>{esc(a['desc'])}</description></item>" for a in arts[:30])
     (DIST / "rss.xml").write_text(f'<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>{NAME}</title><link>{SITE}/</link><description>{TAGLINE}</description><language>ko</language>{items}</channel></rss>', encoding="utf-8")
     # sitemap
-    urls = ["/", "/about/"] + [f"/section/{k}/" for k in list(SECTIONS) + ["all"]] + [a["url"] for a in arts]
+    urls = ["/", "/about/"] + [f"/section/{k}/" for k in list(SECTIONS) + ["all"]] + [f"/section/{k}/{c}/" for k, cs in SUBCATS.items() for c in cs] + [a["url"] for a in arts]
     (DIST / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + "".join(f"<url><loc>{SITE}{u}</loc></url>" for u in urls) + "</urlset>", encoding="utf-8")
     print(f"built {len(arts)} articles → {DIST}")
 
