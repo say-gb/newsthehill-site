@@ -223,11 +223,12 @@ def boxh(t, href="", tag="h2"):
 
 ADSLOT = '<div class="adslot" data-bf-slot="300x250" aria-label="광고 영역"></div>'
 
-def rank_pick(arts, cur=None, n=10, skip=8):
-    pool = [a for a in arts[skip:] if a is not cur]
-    top = [a for a in pool if not a["column"]][:n//2]; top += [a for a in pool if a["column"]][:n - len(top)]
-    top.sort(key=lambda a: (a["dt"], a.get("time", "")), reverse=True)
-    return top
+def rank_pick(arts, cur=None, n=10, skip=None):
+    """주요 뉴스: 칼럼·오피니언은 빼고 기사만. front matter 'pick: true'(편집국 선정)를 먼저, 나머지는 최신순으로 채운다.
+    skip은 예전 호출과의 호환용으로 남겨 두고 쓰지 않는다(2026-10-20 교수님 지시)."""
+    news = [a for a in arts if a is not cur and not a["column"] and a["section"] != "opinion"]
+    picked = [a for a in news if a.get("pick", "").lower() == "true"]
+    return (picked + [a for a in news if a not in picked])[:n]
 
 def rank(arts, cur=None, n=10, skip=8, *, picked=None):
     top = rank_pick(arts, cur, n, skip) if picked is None else picked
