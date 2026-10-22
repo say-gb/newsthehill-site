@@ -58,7 +58,7 @@
 - 저장소: `say-gb/newsthehill-site`. **원고는 `redesign` 브랜치**, 실제 사이트는 `main` 브랜치(빌드 결과물, GitHub Pages).
 - 파일: `articles/YYYY-MM-DD-news-YYYYMMDDNNNNN.md`. 번호는 같은 날 기존 번호 다음(예: 그날 00003까지 있으면 00004).
 - 모범: `articles/2026-10-21-news-2026102100001.md`, `…00002.md`, `…00003.md`의 형식과 문체를 그대로 따른다.
-- front matter: title, subtitle, `section: local`, `author: 최경집`, date(게시일), slug, `time: HH:MM`(게시 시각, KST).
+- front matter: title, subtitle, `section: local`, `author: 뉴스더힐 편집국`(교수님 10/22 지시: 보도자료 기사는 편집국 명의, 칼럼만 최경집), date(게시일), slug, `time: HH:MM`(게시 시각, KST).
 - 본문 첫 줄 `입력 YYYY-MM-DD`, 다음에 대표 사진과 이탤릭 캡션 `*…. 사진=송파구 제공*`.
 - 보도자료를 그대로 붙이지 않고 뉴스더힐 기사체(~다)로 다시 쓴다. 리드 → "송파구는 N일 보도자료에서 이같이 밝혔다" → 세부 → 일정·방법 → 구청장 인용(원문 그대로) 순서.
 - 사진 캡션에는 보도자료나 사진에서 확인되는 것만 쓴다. 누구인지 확인되지 않는 인물을 이름으로 지목하지 않는다. 인물 한 명만 크게 나온 사진은 누구인지 보도자료에 없으면 쓰지 않는다.
