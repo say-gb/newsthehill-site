@@ -10,7 +10,7 @@ column: true
 draft: true
 ---
 
-![최경집 교수의 시선](/workspace/blog-assets/column-header-sisun.png)
+![최경집 교수의 시선](/static/column-header-sisun.jpg)
 
 김장 장사는 김장하는 날이 아니라 주문서를 넣는 날에 갈린다.
 

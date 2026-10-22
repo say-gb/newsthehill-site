@@ -15,11 +15,12 @@
 |---|---|---|
 | 박현 손해사정사 | 박현.png | hyun- |
 | 단지팀장(백효연) | 단지.png | danji- |
+| 최경집 | 최경집.png (= static/column-header-sisun.jpg) | kj- 등 |
 
 - 가로 1000px JPEG(품질 85)로 줄여 `static/img/<slug>-photo1.jpg`로 저장하고, 본문 첫 줄에 `![제목에서 머리말을 뺀 부분](/static/img/<slug>-photo1.jpg)`. 캡션은 달지 않는다(기존 칼럼과 같음).
 - 메일에 원고용 사진이 따로 오면 그 사진을 대표 이미지로 쓰고, 칼럼리스트 이미지는 쓰지 않는다.
 - 폴더에 없는 새 필자면 게시 전에 교수님께 이미지를 요청한다.
-- 최경집 교수 칼럼([최경집 교수의 시선])은 사이트 공통 헤더 이미지를 쓰므로 이 절차의 대상이 아니다.
+- 최경집 교수 칼럼은 5절.
 
 ## 3. front matter
 ```
@@ -35,3 +36,7 @@ time: HH:MM
 
 ## 4. 검증·배포
 docs/songpa-auto-publish.md 5~6절과 같다(build.py, 화면 확인, redesign 푸시, backup/main-<SHA>, main 배포, CNAME 유지).
+
+## 5. 최경집 교수 칼럼
+- 교수님 10/22 지시로 같은 폴더의 `최경집.png`(사이트의 `static/column-header-sisun.jpg`와 같은 그림)를 본문 맨 위에 넣는다: `![최경집 교수의 시선](/static/column-header-sisun.jpg)`.
+- 10/22 기준 공개된 최경집 칼럼 18편 모두 이 그림이 들어가 있다(옛 기사는 `static/old/kj-…-0.png`, 빠져 있던 4편은 이날 추가).
