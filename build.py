@@ -380,7 +380,7 @@ def build():
         body = f"""<div class="cols"><div class="mainc"><article class="post">
 <p class="crumb"><a href="/">홈</a> &gt; <a href="/section/{a['section']}/">{secname(a)}</a></p>
 <header class="ah">{kicker_label}<h1>{esc(a['title'])}</h1>{f'<p class="sub">{esc(a["subtitle"])}</p>' if a.get('subtitle') else ''}
-<div class="info"><ul><li>기자명 <b>{esc(a['author'])}</b></li><li>입력 {dt(a)}</li>{('<li>수정 ' + esc(a['updated']) + '</li>') if a.get('updated') else ''}</ul>
+<div class="info"><ul><li><b>{esc(a['author'])}</b></li><li>입력 {dt(a)}</li>{('<li>수정 ' + esc(a['updated']) + '</li>') if a.get('updated') else ''}</ul>
 <span class="fs"><button type="button" data-d="-" aria-label="글자 작게">가-</button><button type="button" data-d="+" aria-label="글자 크게">가+</button></span></div></header>
 <div class="body">{a['html']}</div>
 <p class="byl">{esc(a['author'])} {byline_email}</p>
