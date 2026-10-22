@@ -7,6 +7,7 @@
 메일 확인 → 새 보도자료 고르기 → 사진 가져오기(브라우저) → 기사 쓰기 → 검증 → 빌드·미리보기 → 배포 → 라벨 붙이기 → 교수님께 보고
 
 ## 1. 메일 확인
+- **브라우저 선택**: Claude in Chrome이 여러 개 연결돼 있으면 kj@abanable.com과 GitHub(say-gb)가 모두 로그인된 **'직장' 크롬 프로필**을 쓴다(list_connected_browsers → select_browser). 2026-10-22 기준 '직장' 프로필에서는 kj 메일이 /u/0/이다.
 - 받는 곳: info@newsthehill.com. 이 주소로 온 메일은 kj@abanable.com Gmail 메일함에 들어온다.
 - **Gmail 연동(커넥터)은 최근 메일을 수십 분~수 시간 늦게 보여준다. 반드시 Claude in Chrome으로 메일함을 직접 연다.**
   - 주소: `https://mail.google.com/mail/?authuser=kj@abanable.com` (Chrome 계정 순서상 보통 /u/1/. 제목 표시줄에 kj@abanable.com이 보이는지 확인)
@@ -21,8 +22,13 @@
 ## 3. 사진 가져오기 (브라우저 → GitHub 업로드 화면)
 작업 컨테이너는 Gmail 첨부를 직접 받을 수 없다. 아래 방법으로 사진을 저장소에 올린다.
 1. Gmail 탭에서 해당 메일을 연다(검색 결과 목록에서 클릭. Gmail은 한 페이지 앱이라 탭 안 이동은 클릭/`history.back()`으로).
-2. Gmail 탭에서 GitHub 업로드 창을 연다:
-   `window.__gh = window.open('https://github.com/say-gb/newsthehill-site/upload/redesign/static/img','_blank')`
+2. Gmail 탭에서 GitHub 업로드 창을 연다. `window.open`은 클릭 없이 부르면 팝업 차단으로 `null`이 되므로, 임시 버튼을 만들고 computer 도구로 그 버튼을 클릭한다:
+   ```js
+   const b=document.createElement('button'); b.textContent='GH'; b.style.cssText='position:fixed;left:10px;top:10px;z-index:999999;width:80px;height:40px';
+   b.onclick=()=>{ window.__gh=window.open('https://github.com/say-gb/newsthehill-site/upload/redesign/static/img','_blank'); b.remove(); };
+   document.body.appendChild(b);
+   ```
+   업로드 화면에 "Uploads are disabled"가 뜨면 그 크롬에 GitHub 로그인이 풀린 것이다. 게시하지 말고 교수님께 say-gb 로그인을 요청한다.
 3. GitHub 탭(새로 열린 탭 ID는 tabs_context_mcp로 확인)에 수신기를 단다:
    ```js
    window.__files=[]; window.addEventListener('message', e=>{ if(e.origin!=='https://mail.google.com') return;
