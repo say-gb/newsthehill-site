@@ -7,7 +7,7 @@ author: 최경집
 date: 2026-10-26
 slug: kimjang-order-timing
 column: true
-draft: true
+time: 13:18
 ---
 
 ![최경집 교수의 시선](/static/column-header-sisun.jpg)
