@@ -179,6 +179,9 @@ var f=document.querySelector('.srch');if(f)f.addEventListener('submit',function(
 var h=document.querySelector('.ham');if(h)h.onclick=function(){document.documentElement.classList.toggle('menu-open')};})();
 </script><script src="/static/js/blankfill.js" data-banners="/static/banners/banners.json" defer></script><script src="/static/js/ticker.js" defer></script>"""
 
+import hashlib as _h
+CSSV = _h.md5((ROOT / "static/style.css").read_bytes()).hexdigest()[:8]  # 스타일 바꾸면 브라우저가 새로 받게
+
 def page(title, body, desc=TAGLINE, url="/", image="/static/og-default.jpg", active="", ogtype="website", arts=(), keywords=""):
     full = f"{title} - {NAME}" if title else f"{NAME} - {TAGLINE}"
     return f"""<!doctype html><html lang="ko"><head><meta charset="utf-8">
@@ -191,7 +194,7 @@ def page(title, body, desc=TAGLINE, url="/", image="/static/og-default.jpg", act
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;900&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
-<link rel="alternate" type="application/rss+xml" title="{NAME}" href="/rss.xml"><link rel="stylesheet" href="/static/style.css"><link rel="stylesheet" href="/static/css/motion.css">
+<link rel="alternate" type="application/rss+xml" title="{NAME}" href="/rss.xml"><link rel="stylesheet" href="/static/style.css?v={CSSV}"><link rel="stylesheet" href="/static/css/motion.css">
 </head><body>
 {header(active, arts)}
 <main class="wrap">{body}</main>
