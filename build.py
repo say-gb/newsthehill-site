@@ -71,7 +71,7 @@ def load():
         meta["dt"] = datetime.strptime(meta["date"][:10], "%Y-%m-%d")
         if meta["section"] not in SECTIONS: raise SystemExit(f"{f}: 알 수 없는 section {meta['section']}")
         meta["html"] = md(body)
-        plain = html.unescape(re.sub(r"<[^>]+>", "", meta["html"]))
+        plain = html.unescape(re.sub(r"<[^>]+>", "", re.sub(r"<figure>.*?</figure>", "", meta["html"], flags=re.S)))  # 사진 캡션은 요약에서 뺀다
         meta["desc"] = meta.get("subtitle") or plain[:110]
         meta["excerpt"] = plain[:90].strip() + "…"
         meta["url"] = f"/articles/{meta['slug']}/"
@@ -285,7 +285,11 @@ def make_thumbs(arts):
         if Image is None: a["thumb"] = src; continue
         p = ROOT / src.lstrip("/"); out = tdir / (Path(src).stem + ".jpg")
         if not out.exists():
-            im = Image.open(p).convert("RGB"); im.thumbnail((480, 480)); im.save(out, quality=80)
+            im = Image.open(p).convert("RGB")
+            if im.height > im.width * 0.8:  # 세로 사진(인물 등)은 목록 칸(3:2)에서 머리가 잘리지 않게 위쪽 기준으로 자른다
+                h = round(im.width * 2 / 3); top = min(round(im.height * 0.04), im.height - h)
+                im = im.crop((0, top, im.width, top + h))
+            im.thumbnail((480, 480)); im.save(out, quality=80)
         a["thumb"] = "/static/thumb/" + out.name
 
 FACES = {"kj": (0.50, 0.04, 0.96, 0.62), "hyun": (0.57, 0.10, 0.89, 0.50), "danji": (0.62, 0.06, 0.92, 0.56)}  # 연재 이미지에서 얼굴 부분(비율)
