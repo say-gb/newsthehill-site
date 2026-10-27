@@ -1,5 +1,5 @@
 {
-  "_note": "광고 배너 3개(어반에이블·어썸에이치·낭만클럽, 교수님 2026-10-17 14:18). 모두 type ad, 슬롯에 광고 라벨. 기사 페이지(/articles/) 제외. 추천(뉴스더힐 칼럼)은 자체 콘텐츠로 광고 아님. 어썸에이치는 실제 링크 확정 전까지 비활성(이미지 파일은 보관, 2026-10-17 15:24). 이미지 안에 '광고' 표시가 있으면 슬롯 머리 '광고' 글자를 생략(img_label). 낭만클럽 광고는 교수님 요청(2026-10-17 22:15)으로 priority 102 — 키워드 점수(최대 1)와 관계없이 PC 옆 첫 칸·모바일 300x250 칸에 먼저 나옴. 추천(sample-column-kj, 최경집 교수의 현장 마케팅 노트)은 교수님 결정(2026-10-17 22:36)으로 비활성 — 나중에 SNS 기획 인터뷰 기사가 나오면 그 추천으로 바꿈(이미지 파일은 보관).",
+  "_note": "광고 배너 3개(어반에이블·어썸에이치·낭만클럽, 교수님 2026-10-17 14:18). 모두 type ad, 슬롯에 광고 라벨. 기사 페이지(/articles/) 제외. 추천(뉴스더힐 칼럼)은 자체 콘텐츠로 광고 아님. 어썸에이치는 실제 링크 확정 전까지 비활성(이미지 파일은 보관, 2026-10-17 15:24). 이미지 안에 '광고' 표시가 있으면 슬롯 머리 '광고' 글자를 생략(img_label). 낭만클럽 광고는 교수님 요청(2026-10-17 22:15)으로 priority 102 — 키워드 점수(최대 1)와 관계없이 PC 옆 첫 칸·모바일 300x250 칸에 먼저 나옴. 추천(sample-column-kj, 최경집 교수의 현장 마케팅 노트)은 교수님 결정(2026-10-17 22:36)으로 비활성 — 나중에 SNS 기획 인터뷰 기사가 나오면 그 추천으로 바꿈(이미지 파일은 보관). 낭만클럽 네이버 스마트스토어(smartstore.naver.com/nangman_club) 배너 2종 추가(교수님 요청 2026-10-27) — priority 101로 낭만클럽 몰 배너(102) 다음, 같은 크기 칸에서 30초마다 번갈아 노출. 낭만클럽 카카오톡 채널 '회원 초대 문의' 배너 2종 추가(2026-10-27, priority 100) — 가입코드는 아무에게나 주지 않고 1:1 확인 후 초대(교수님 결정).",
   "x": 0.5,
   "rotate_sec": 30,
   "min_blank": {
@@ -72,6 +72,74 @@
       ],
       "priority": 102,
       "start": "2026-10-01",
+      "end": "2026-12-31",
+      "img_label": true
+    },
+    {
+      "id": "ad-nangmanclub-store-160x600",
+      "type": "ad",
+      "advertiser": "낭만클럽",
+      "img": "/static/banners/ad-nangmanclub-store-160x600.png",
+      "href": "https://smartstore.naver.com/nangman_club",
+      "w": 160,
+      "h": 600,
+      "keywords": [],
+      "exclude_paths": [
+        "/articles/"
+      ],
+      "priority": 101,
+      "start": "2026-10-27",
+      "end": "2026-12-31",
+      "img_label": true
+    },
+    {
+      "id": "ad-nangmanclub-store-300x250",
+      "type": "ad",
+      "advertiser": "낭만클럽",
+      "img": "/static/banners/ad-nangmanclub-store-300x250.png",
+      "href": "https://smartstore.naver.com/nangman_club",
+      "w": 300,
+      "h": 250,
+      "keywords": [],
+      "exclude_paths": [
+        "/articles/"
+      ],
+      "priority": 101,
+      "start": "2026-10-27",
+      "end": "2026-12-31",
+      "img_label": true
+    },
+    {
+      "id": "ad-nangmanclub-kakao-160x600",
+      "type": "ad",
+      "advertiser": "낭만클럽",
+      "img": "/static/banners/ad-nangmanclub-kakao-160x600.png",
+      "href": "http://pf.kakao.com/_yjQxlX/chat",
+      "w": 160,
+      "h": 600,
+      "keywords": [],
+      "exclude_paths": [
+        "/articles/"
+      ],
+      "priority": 100,
+      "start": "2026-10-27",
+      "end": "2026-12-31",
+      "img_label": true
+    },
+    {
+      "id": "ad-nangmanclub-kakao-300x250",
+      "type": "ad",
+      "advertiser": "낭만클럽",
+      "img": "/static/banners/ad-nangmanclub-kakao-300x250.png",
+      "href": "http://pf.kakao.com/_yjQxlX/chat",
+      "w": 300,
+      "h": 250,
+      "keywords": [],
+      "exclude_paths": [
+        "/articles/"
+      ],
+      "priority": 100,
+      "start": "2026-10-27",
       "end": "2026-12-31",
       "img_label": true
     },
