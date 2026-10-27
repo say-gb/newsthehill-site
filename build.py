@@ -182,10 +182,18 @@ var h=document.querySelector('.ham');if(h)h.onclick=function(){document.document
 import hashlib as _h
 CSSV = _h.md5((ROOT / "static/style.css").read_bytes()).hexdigest()[:8]  # 스타일 바꾸면 브라우저가 새로 받게
 
+# 검색엔진 소유 확인 태그 (구글 서치콘솔 kj@abanable.com 계정, 2026-10-27). 네이버 서치어드바이저 값은 받는 대로 추가.
+SITE_VERIFY = {
+    "google-site-verification": "X54i-CIF1cEqhm-KWgoIELRfcwUH5u2ttQG_TsMs68Y",
+    "naver-site-verification": "",
+}
+VERIFY = "".join(f'<meta name="{k}" content="{v}">' for k, v in SITE_VERIFY.items() if v)
+
+
 def page(title, body, desc=TAGLINE, url="/", image="/static/og-default.jpg", active="", ogtype="website", arts=(), keywords=""):
     full = f"{title} - {NAME}" if title else f"{NAME} - {TAGLINE}"
     return f"""<!doctype html><html lang="ko"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">{VERIFY}
 <title>{esc(full)}</title><meta name="description" content="{esc(desc)}">{f'<meta name="keywords" content="{esc(keywords)}">' if keywords else ''}
 <link rel="canonical" href="{SITE}{url}"><link rel="icon" href="/favicon.ico" sizes="32x32"><link rel="icon" type="image/png" href="/static/favicon.png"><link rel="apple-touch-icon" href="/static/favicon.png">
 <meta property="og:site_name" content="{NAME}"><meta property="og:type" content="{ogtype}"><meta property="og:title" content="{esc(title or NAME)}">
