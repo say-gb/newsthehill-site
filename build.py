@@ -182,10 +182,10 @@ var h=document.querySelector('.ham');if(h)h.onclick=function(){document.document
 import hashlib as _h
 CSSV = _h.md5((ROOT / "static/style.css").read_bytes()).hexdigest()[:8]  # 스타일 바꾸면 브라우저가 새로 받게
 
-# 검색엔진 소유 확인 태그 (구글 서치콘솔 kj@abanable.com 계정, 2026-10-27). 네이버 서치어드바이저 값은 받는 대로 추가.
+# 검색엔진 소유 확인 태그 (구글 서치콘솔 kj@abanable.com 계정, 2026-10-27). 네이버 서치어드바이저(https://newsthehill.com) 2026-10-27 추가.
 SITE_VERIFY = {
     "google-site-verification": "X54i-CIF1cEqhm-KWgoIELRfcwUH5u2ttQG_TsMs68Y",
-    "naver-site-verification": "",
+    "naver-site-verification": "81d5f1c4ebf7bc5215d2900d19f9b066cbd5dc90",
 }
 VERIFY = "".join(f'<meta name="{k}" content="{v}">' for k, v in SITE_VERIFY.items() if v)
 
