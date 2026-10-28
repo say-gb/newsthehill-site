@@ -322,21 +322,30 @@ def kw(a):
     return ",".join([secname(a)] + words)
 
 def _flag(a, key):
-    return str(a.get(key, "")).lower() == "true"
+    return str(a.get(key, "")).lower() not in ("", "false", "0")
 
 def _fresh(a, days=2):
-    # 편집국 지정(headline·sub)은 기사 날짜로부터 이틀까지만 유효 — 자동 게시가 이어져도 첫 화면이 굳지 않게
+    # 헤드라인 지정은 기사 날짜로부터 이틀까지만 유효 — 자동 게시가 이어져도 첫 화면이 굳지 않게
     from zoneinfo import ZoneInfo
     return (datetime.now(ZoneInfo("Asia/Seoul")).date() - a["dt"].date()).days <= days
 
+def _songpa(a):
+    return a["section"] == "local" and "송파" in (a["title"] + a.get("subtitle", ""))
+
 def home_selection(arts):
-    # 첫 화면 편집 규칙(교수님 10/28): headline: true → 헤드라인, sub: true → 바로 아래 3칸 우선,
-    # home: false → 헤드라인·아래 3칸·포토뉴스에서 뺌(교수님 본인 인터뷰·기고 등). 섹션 목록·최신기사에는 그대로 나온다.
+    # 첫 화면 편집 규칙(교수님 10/28 "공신력 있는 송파 관장·병원장, 송파 소식이 먼저, 나는 아직 유명하지 않다"):
+    # 헤드라인 = headline: true(이틀 유효) → 없으면 최근 송파구 소식(사진 있는 것, 사흘 안) → 없으면 최신 사진 기사
+    # 아래 3칸 = sub: 1·2·3(숫자 순, 기한 없음, 직접 내릴 때까지) → 송파구 소식 → 최신 사진 기사
+    # home: false = 헤드라인·아래 3칸·포토뉴스에서 뺌(교수님 본인 인터뷰·기고 등). 최신기사·섹션 목록에는 그대로.
     news = [a for a in arts if not a["column"] and not str(a.get("home", "")).lower() == "false"]
-    head = next((a for a in news if _flag(a, "headline") and a.get("thumb") and _fresh(a)), None) \
-        or next((a for a in news if a.get("thumb")), arts[0])
-    flagged = [a for a in news if a is not head and _flag(a, "sub") and a.get("thumb") and _fresh(a)]
-    subs = (flagged + [a for a in news if a is not head and a.get("thumb") and a not in flagged])[:3]
+    pics = [a for a in news if a.get("thumb")]
+    head = next((a for a in pics if _flag(a, "headline") and _fresh(a)), None) \
+        or next((a for a in pics if _songpa(a) and _fresh(a, 3)), None) \
+        or (pics[0] if pics else arts[0])
+    flagged = sorted([a for a in pics if a is not head and _flag(a, "sub")],
+                     key=lambda a: int(a["sub"]) if str(a["sub"]).isdigit() else 9)
+    songpa = [a for a in pics if a is not head and a not in flagged and _songpa(a) and _fresh(a, 3)]
+    subs = (flagged + songpa + [a for a in pics if a is not head and a not in flagged and a not in songpa])[:3]
     if len(subs) < 3: subs += [a for a in news if a is not head and a not in subs][:3 - len(subs)]
     used = {id(head)} | {id(a) for a in subs}
     blocks = []
