@@ -175,7 +175,7 @@ html.menu-open .gnb .wrap{flex-wrap:wrap}
 .body p a,.body li a{color:#1a4731;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(26,71,49,.35)}.body p a:hover,.body li a:hover{text-decoration-color:currentColor}
 
 /* ===== 10/28 더바이어 참고 개편: BI 키우기·큰 헤드라인·3단 ===== */
-.logo img{height:92px}
+.logo img{height:104px}
 .mast .wrap{padding-top:22px;padding-bottom:20px}
 .gnb a{font-size:17px;line-height:50px;padding:0 30px}
 .home2{grid-template-columns:minmax(0,5fr) minmax(0,3fr) minmax(0,4fr);grid-template-areas:"top top latest" "sisun sisun sisun" "list box side" "secs secs side" "photo photo side";grid-template-rows:auto auto auto auto 1fr}
