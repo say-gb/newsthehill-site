@@ -9,7 +9,7 @@ slug: kj-withbuyer-2026-seven
 time: 10:48
 ---
 
-![최경집 더에이블 대표](/static/img/interview-2026102800003-photo1.jpg)
+![최경집 더에이블 대표](/static/img/interview-2026102800001-photo1.jpg)
 
 *최경집 더에이블 대표(호서대 식품공학과 겸임교수, 경영학 박사). 사진=더바이어*
 
