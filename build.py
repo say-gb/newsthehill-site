@@ -321,11 +321,23 @@ def kw(a):
     words = [w for w in t.split() if len(w) >= 2][:8]
     return ",".join([secname(a)] + words)
 
+def _flag(a, key):
+    return str(a.get(key, "")).lower() == "true"
+
+def _fresh(a, days=2):
+    # 편집국 지정(headline·sub)은 기사 날짜로부터 이틀까지만 유효 — 자동 게시가 이어져도 첫 화면이 굳지 않게
+    from zoneinfo import ZoneInfo
+    return (datetime.now(ZoneInfo("Asia/Seoul")).date() - a["dt"].date()).days <= days
+
 def home_selection(arts):
-    news = [a for a in arts if not a["column"]]
-    head = next((a for a in news if a.get("thumb")), arts[0])
-    subs = [a for a in news if a is not head and a.get("thumb")][:3]
-    if len(subs) < 3: subs += [a for a in arts if a is not head and a not in subs][:3 - len(subs)]
+    # 첫 화면 편집 규칙(교수님 10/28): headline: true → 헤드라인, sub: true → 바로 아래 3칸 우선,
+    # home: false → 헤드라인·아래 3칸·포토뉴스에서 뺌(교수님 본인 인터뷰·기고 등). 섹션 목록·최신기사에는 그대로 나온다.
+    news = [a for a in arts if not a["column"] and not str(a.get("home", "")).lower() == "false"]
+    head = next((a for a in news if _flag(a, "headline") and a.get("thumb") and _fresh(a)), None) \
+        or next((a for a in news if a.get("thumb")), arts[0])
+    flagged = [a for a in news if a is not head and _flag(a, "sub") and a.get("thumb") and _fresh(a)]
+    subs = (flagged + [a for a in news if a is not head and a.get("thumb") and a not in flagged])[:3]
+    if len(subs) < 3: subs += [a for a in news if a is not head and a not in subs][:3 - len(subs)]
     used = {id(head)} | {id(a) for a in subs}
     blocks = []
     for k, v in SECTIONS.items():

@@ -7,6 +7,7 @@ author: 최경집
 date: 2026-10-28
 slug: kj-withbuyer-2026-seven
 time: 10:48
+home: false
 ---
 
 ![최경집 더에이블 대표](/static/img/interview-2026102800001-photo1.jpg)
