@@ -6,7 +6,7 @@
 
 spec.json 필드(모두 선택, title만 필수):
   theme   light(아이보리) green red blue orange purple dark(회수·위해). 빼면 kicker·제목 낱말로 자동 선택(v3)
-  art     ["cut-of-meat", "shopping-cart"]  일러스트 1~3개(첫째가 크게). scripts/art/fluent/*.png 파일 이름. v3 — 카드마다 주제에 맞게 꼭 넣는다
+  art     ["cut-of-meat", "shopping-cart"]  일러스트 1~3개(첫째가 크게). scripts/art/fluent/*.png 파일 이름. 10/28 교수님 "너무 AI스러워"로 보류 — 쓰지 않는다
   layout  "poster"면 왼쪽 큰 그림 + 오른쪽 제목·목록(art 필요). 기본은 위 제목·오른쪽 그림 + 아래 칸. bars가 있으면 막대형
   kicker  상단 분류 라벨. 예: "식품 회수"
   title   ["1줄", "2줄"]  (최대 2줄)
