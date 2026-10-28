@@ -221,3 +221,6 @@ html.menu-open .gnb .wrap{flex-wrap:wrap}
 .mast .wrap{padding-top:8px;padding-bottom:10px}
 .gnb a{font-size:14px;line-height:42px;padding:0}
 }
+
+/* 칼럼 박스 오른쪽 목록 필자 이름(10/28) */
+.smore .sw{color:var(--gold);font-weight:700;margin-right:2px}

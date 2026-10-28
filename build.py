@@ -261,19 +261,36 @@ def columnists(arts, *, picked=None):
 def sidebar(arts, cur=None):
     return f'<aside class="side">{rank(arts, cur)}{ADSLOT}{columnists(arts)}</aside>'
 
-def colbox_pick(arts):
-    mine = [a for a in arts if a["author"] == "최경집" and a["column"]]  # 칼럼만(교수님이 쓴 인터뷰·기사는 제외)
-    c = mine[0] if mine else None
-    others = mine[1:4]
-    return c, others
+COLBOX_BYLINE = {"최경집": "최경집 식품마케팅 교수"}  # 박스 아래 필자 표기(없으면 저자 문자열 그대로)
 
-def colbox(arts, *, picked=None):  # 「최경집 교수의 시선」 아이보리 박스
+def colbox_pick(arts):
+    # 10/28 교수님: "칼럼도 3명이 최신일 때마다 바꿔줘" — 칼럼니스트 3명 중 가장 최근에 쓴 사람이 박스 주인공,
+    # 오른쪽 목록은 나머지 칼럼니스트들의 최근 칼럼(사람마다 1편씩 먼저, 모자라면 최근순)
+    authors = {author for _, _, author, _ in COLUMNISTS}
+    cols = [a for a in arts if a["column"] and a["author"] in authors]
+    c = cols[0] if cols else None
+    if not c: return None, []
+    rest = [a for a in cols if a is not c]
+    others = []
+    for _, _, author, _ in COLUMNISTS:
+        if author == c["author"]: continue
+        x = next((a for a in rest if a["author"] == author), None)
+        if x: others.append(x)
+    others += [a for a in rest if a not in others]
+    others.sort(key=lambda a: (a["dt"], a.get("time", "")), reverse=True)
+    return c, others[:3]
+
+def colbox(arts, *, picked=None):  # 칼럼니스트 아이보리 박스(최신 칼럼니스트가 주인공)
     c, others = colbox_pick(arts) if picked is None else picked
     if not c: return ""
+    name, series, author, ph = next(x for x in COLUMNISTS if x[2] == c["author"])
     first = re.sub(r"<[^>]+>", "", c["html"]).strip().split("\n")[0][:120]
-    return f"""<section class="sisun"><a class="sface" href="{c['url']}"><img src="{COLUMNISTS[0][3]}" alt="최경집 교수"></a>
-<div class="stx"><p class="slab">최경집 교수의 시선</p><a href="{c['url']}"><strong>{esc(clean(c['title']))}</strong><p>{esc(first)}…</p></a><em class="m">최경집 식품마케팅 교수<i>|</i>{dt(c)}</em></div>
-<ul class="smore">{''.join(f'<li><a href="{a["url"]}">{esc(clean(a["title"]))}</a><time>{a["dt"]:%m.%d}</time></li>' for a in others)}</ul></section>"""
+    byline = COLBOX_BYLINE.get(author, author)
+    def who(a):
+        return {"단지팀장(백효연)": "단지팀장", "박현 손해사정사": "박현"}.get(a["author"], a["author"])
+    return f"""<section class="sisun"><a class="sface" href="{c['url']}"><img src="{ph}" alt="{esc(name)}"></a>
+<div class="stx"><p class="slab">{esc(series)}</p><a href="{c['url']}"><strong>{esc(clean(c['title']))}</strong><p>{esc(first)}…</p></a><em class="m">{esc(byline)}<i>|</i>{dt(c)}</em></div>
+<ul class="smore">{''.join(f'<li><a href="{a["url"]}"><b class="sw">{esc(who(a))}</b> {esc(clean(a["title"]))}</a><time>{a["dt"]:%m.%d}</time></li>' for a in others)}</ul></section>"""
 
 def write(path, s):
     p = DIST / path.lstrip("/"); p = p / "index.html" if not p.suffix else p
