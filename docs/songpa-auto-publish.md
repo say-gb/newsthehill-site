@@ -4,23 +4,32 @@
 예약 작업(scheduled task)이 이 문서를 읽고 그대로 따른다. 절차를 바꿀 때는 이 문서를 고친다.
 
 ## 0. 전체 흐름
-메일 확인 → 새 보도자료 고르기 → 사진 가져오기(브라우저) → 기사 쓰기 → 검증 → 빌드·미리보기 → 배포 → 라벨 붙이기 → 교수님께 보고
+메일 확인(Gmail 커넥터) → 새 보도자료 고르기 → 사진(Chrome 되면 송파구 사진, 안 되면 인포그래픽 후 나중에 교체) → 기사 쓰기 → 검증 → 빌드·미리보기 → 배포 → 라벨 붙이기(커넥터) → 교수님께 보고
 
-## 1. 메일 확인
-- **브라우저 선택**: Claude in Chrome이 여러 개 연결돼 있으면 kj@abanable.com과 GitHub(say-gb)가 모두 로그인된 **'직장' 크롬 프로필**을 쓴다(list_connected_browsers → select_browser). 2026-10-22 기준 '직장' 프로필에서는 kj 메일이 /u/0/이다.
-- 받는 곳: info@newsthehill.com. 이 주소로 온 메일은 kj@abanable.com Gmail 메일함에 들어온다.
-- **Gmail 연동(커넥터)은 최근 메일을 수십 분~수 시간 늦게 보여준다. 반드시 Claude in Chrome으로 메일함을 직접 연다.**
-  - 주소: `https://mail.google.com/mail/?authuser=kj@abanable.com` (Chrome 계정 순서상 보통 /u/1/. 제목 표시줄에 kj@abanable.com이 보이는지 확인)
-  - 검색: `(from:songpa.go.kr OR (from:info@newsthehill.com 송파구)) -label:뉴스더힐-처리 newer_than:14d`
+**2026-10-28 변경(교수님 지시 "pc없이도 돌게")**: 예약 작업이 교수님 PC·데스크톱 앱 없이 클라우드에서 돈다. 메일 읽기·라벨은 Gmail 커넥터로 하고, Claude in Chrome은 사진 옮길 때만 "되면 쓰는" 선택 사항이다. Chrome이 안 된다는 이유로 게시를 멈추지 않는다.
+
+## 1. 메일 확인 (Gmail 커넥터)
+- 받는 곳: info@newsthehill.com. kj@abanable.com Gmail 메일함에 들어오고, Gmail 커넥터가 이 계정에 연결돼 있다.
+- `search_threads` 검색어: `(from:songpa.go.kr OR (from:info@newsthehill.com 송파구)) -label:뉴스더힐-처리 newer_than:14d`
+- 본문은 `get_message`(messageFormat `PLAIN_TEXT`)로 읽는다. 첨부 이름(사진 jpg, hwp)도 여기서 확인된다. 첨부 파일 자체는 커넥터로 받지 못한다(`RAW`는 수 MB라 쓰지 않는다).
+- 커넥터는 최근 메일을 늦게 보여줄 수 있다. 이번 회차에 안 보인 메일은 라벨이 없으니 다음 회차에 잡힌다. 그래서 놓치지 않는다.
 - 대상: 송파구청 홍보담당관(언론팀) 주무관이 보낸 **(송파구 보도자료)** 메일, 또는 교수님이 info@newsthehill.com에서 전달(FW)한 송파구 보도자료.
-- 대상 아님: 광고, 행사 초대, 송파구 아닌 기관, 본문 없이 hwp만 있고 내용을 확인할 수 없는 메일 → 게시하지 않고 보고에만 적는다.
+- 대상 아님: 광고, 행사 초대, 송파구 아닌 기관, 본문 없이 hwp만 있고 내용을 확인할 수 없는 메일, 날짜가 이미 지난 행사 → 게시하지 않고 라벨만 붙이고 보고에 적는다.
 
 ## 2. 중복 막기
 - 처리한 메일에는 Gmail 라벨 **'뉴스더힐-처리'**를 붙인다(게시한 것과 건너뛴 것 모두).
 - 라벨이 없어도 `articles/`에 같은 내용의 기사가 이미 있으면(제목 핵심어·행사명으로 `rg`) 새로 쓰지 않고 라벨만 붙인다.
 
-## 3. 사진 가져오기 (브라우저 → GitHub 업로드 화면)
-작업 컨테이너는 Gmail 첨부를 직접 받을 수 없다. 아래 방법으로 사진을 저장소에 올린다.
+## 3. 사진 가져오기
+작업 컨테이너는 Gmail 첨부를 직접 받을 수 없다. 순서대로 시도한다.
+
+**3-0. 먼저 밀린 사진 교체**: `docs/photo-pending.md`에 남은 기사가 있고 이번 회차에 Chrome이 되면, 새 기사보다 먼저 그 기사들의 인포그래픽을 송파구 사진으로 바꾼다. 바꿀 때는 새 파일 이름(`…-photo1.jpg`)을 쓰고(같은 이름 덮어쓰기는 휴대폰 캐시에 옛 그림이 남는다), 캡션을 `사진=송파구 제공`으로 고치고, 목록에서 지운다.
+
+**3-A. Chrome이 될 때 (송파구 사진)**: `list_connected_browsers`로 연결된 크롬이 있으면 kj@abanable.com과 GitHub(say-gb)가 로그인된 **'직장' 프로필**을 고르고 아래 1~6을 따른다. Gmail 주소는 `https://mail.google.com/mail/?authuser=kj@abanable.com`(직장 프로필에서 보통 /u/0/), 해당 메일은 커넥터 결과의 viewUrl이나 검색으로 연다.
+
+**3-B. Chrome이 안 될 때**: 게시를 미루지 않는다. `scripts/make_infographic.py`로 대표 이미지를 만들어(일러스트 없이, docs/food-auto-publish.md 1절 3번 규칙) 게시하고, 캡션은 `*그래픽=뉴스더힐(자료: 송파구)*`. 메일에 사진 첨부가 있었으면 `docs/photo-pending.md`에 `- news-…: 메일 제목 / 첨부 사진 이름` 한 줄을 남겨 다음 회차(3-0)에서 송파구 사진으로 바꾼다. 보고에 "사진 교체 대기"라고 적는다.
+
+**3-A 세부 방법 (브라우저 → GitHub 업로드 화면)**
 1. Gmail 탭에서 해당 메일을 연다(검색 결과 목록에서 클릭. Gmail은 한 페이지 앱이라 탭 안 이동은 클릭/`history.back()`으로).
 2. Gmail 탭에서 GitHub 업로드 창을 연다. `window.open`은 클릭 없이 부르면 팝업 차단으로 `null`이 되므로, 임시 버튼을 만들고 computer 도구로 그 버튼을 클릭한다:
    ```js
@@ -77,8 +86,8 @@
 2. `main`을 받아 현재 커밋으로 백업 브랜치 `backup/main-<짧은SHA>`를 만든다.
 3. `main` 작업 트리에서 `.git`을 뺀 모든 파일을 지우고 `dist/` 내용을 복사한다. **CNAME은 기존 main 파일을 그대로 둔다**(줄바꿈 없는 `newsthehill.com`).
 4. 커밋 메시지: `배포: redesign <SHA> 빌드 결과 — <기사 요약>. CNAME 원본 유지. 이전 main <SHA>` 후 푸시.
-5. 1~2분 뒤 브라우저로 `https://newsthehill.com/`과 새 기사 주소를 열어 반영을 확인한다(작업 컨테이너에서는 사이트에 직접 접속이 안 된다).
+5. Chrome이 되면 1~2분 뒤 `https://newsthehill.com/`과 새 기사 주소를 열어 반영을 확인한다. 안 되면 WebFetch로 새 기사 주소의 제목이 나오는지 확인한다(작업 컨테이너에서는 사이트에 직접 접속이 안 된다).
 
 ## 7. 마무리
-- 처리한 메일 모두에 '뉴스더힐-처리' 라벨을 붙인다(브라우저에서 메일을 열고 라벨 아이콘 → 뉴스더힐-처리).
+- 처리한 메일 모두에 '뉴스더힐-처리' 라벨을 붙인다: Gmail 커넥터 `label_message`(labelIds `["Label_14"]`). 라벨 ID가 다르면 `list_labels`에서 이름 '뉴스더힐-처리'로 찾는다.
 - 교수님께 짧게 보고: 게시한 기사 제목과 주소, 건너뛴 메일과 이유, 검증 중 고친 원문 오류. 새 보도자료가 없으면 "새 보도자료 없음" 한 줄.
