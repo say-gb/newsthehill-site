@@ -170,3 +170,6 @@ html.menu-open .gnb .wrap{flex-wrap:wrap}
 @media(max-width:599px){.gnb .wrap{display:grid;grid-template-columns:repeat(5,1fr);overflow:visible;padding:0;justify-content:stretch}.gnb a{padding:0;text-align:center;font-size:14px;line-height:42px;letter-spacing:-.04em;white-space:nowrap}}
 /* 인포카드(16:9, 글자 포함)는 목록 썸네일에서 잘리지 않게 전체를 보여 주고 남는 여백은 카드 배경색으로 (교수님 10/23 지시) */
 .th img[src$="-card.jpg"],.lph img[src$="-card.jpg"]{object-fit:contain;object-position:center;background:#283043}
+
+/* 기사 본문 링크(관련 기사 등) — 클릭할 수 있어 보이게, 10/28 */
+.body p a,.body li a{color:#1a4731;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(26,71,49,.35)}.body p a:hover,.body li a:hover{text-decoration-color:currentColor}
