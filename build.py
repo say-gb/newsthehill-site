@@ -261,7 +261,8 @@ def columnists(arts, *, picked=None):
 def sidebar(arts, cur=None):
     return f'<aside class="side">{rank(arts, cur)}{ADSLOT}{columnists(arts)}</aside>'
 
-COLBOX_BYLINE = {"최경집": "최경집 식품마케팅 교수"}  # 박스 아래 필자 표기(없으면 저자 문자열 그대로)
+COLBOX_BYLINE = {"최경집": "최경집 식품마케팅 교수"}
+COLBOX_THEME = {"최경집": "c-kj", "박현 손해사정사": "c-hyun", "단지팀장(백효연)": "c-danji"}  # 10/28 교수님: 필자마다 박스 배경색 다르게  # 박스 아래 필자 표기(없으면 저자 문자열 그대로)
 
 def colbox_pick(arts):
     # 10/28 교수님: "칼럼도 3명이 최신일 때마다 바꿔줘" — 칼럼니스트 3명 중 가장 최근에 쓴 사람이 박스 주인공,
@@ -288,7 +289,7 @@ def colbox(arts, *, picked=None):  # 칼럼니스트 아이보리 박스(최신 
     byline = COLBOX_BYLINE.get(author, author)
     def who(a):
         return {"단지팀장(백효연)": "단지팀장", "박현 손해사정사": "박현"}.get(a["author"], a["author"])
-    return f"""<section class="sisun"><a class="sface" href="{c['url']}"><img src="{ph}" alt="{esc(name)}"></a>
+    return f"""<section class="sisun {COLBOX_THEME.get(author, '')}"><a class="sface" href="{c['url']}"><img src="{ph}" alt="{esc(name)}"></a>
 <div class="stx"><p class="slab">{esc(series)}</p><a href="{c['url']}"><strong>{esc(clean(c['title']))}</strong><p>{esc(first)}…</p></a><em class="m">{esc(byline)}<i>|</i>{dt(c)}</em></div>
 <ul class="smore">{''.join(f'<li><a href="{a["url"]}"><b class="sw">{esc(who(a))}</b> {esc(clean(a["title"]))}</a><time>{a["dt"]:%m.%d}</time></li>' for a in others)}</ul></section>"""
 

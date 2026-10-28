@@ -224,3 +224,14 @@ html.menu-open .gnb .wrap{flex-wrap:wrap}
 
 /* 칼럼 박스 오른쪽 목록 필자 이름(10/28) */
 .smore .sw{color:var(--gold);font-weight:700;margin-right:2px}
+/* 칼럼 박스 필자별 배경(10/28): 최경집 딥그린 · 박현 네이비 · 단지팀장 버건디 */
+.sisun.c-kj{--cb:#1F4A36}.sisun.c-hyun{--cb:#283043}.sisun.c-danji{--cb:#6B2230}
+.sisun.c-kj,.sisun.c-hyun,.sisun.c-danji{background:var(--cb);border-left-color:var(--gold);color:#F6F0E4}
+.sisun[class*=" c-"] .sface{border-color:var(--gold)}
+.sisun[class*=" c-"] .slab{color:var(--gold)}
+.sisun[class*=" c-"] .stx strong{color:#fff}
+.sisun[class*=" c-"] .stx p{color:rgba(246,240,228,.82)}
+.sisun[class*=" c-"] .m,.sisun[class*=" c-"] .m i{color:rgba(246,240,228,.65)}
+.sisun[class*=" c-"] .smore{border-left-color:rgba(246,240,228,.22)}
+.sisun[class*=" c-"] .smore a{color:#F6F0E4}
+.sisun[class*=" c-"] .smore time{color:rgba(246,240,228,.6)}
