@@ -235,3 +235,6 @@ html.menu-open .gnb .wrap{flex-wrap:wrap}
 .sisun[class*=" c-"] .smore{border-left-color:rgba(246,240,228,.22)}
 .sisun[class*=" c-"] .smore a{color:#F6F0E4}
 .sisun[class*=" c-"] .smore time{color:rgba(246,240,228,.6)}
+
+/* 카드뉴스(세로 4:5) 본문 폭 제한(10/28) */
+.body img[src*="-cn"]{max-width:560px;width:100%;display:block;margin:0 auto}

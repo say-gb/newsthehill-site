@@ -317,6 +317,8 @@ def make_thumbs(arts):
             im = Image.open(p).convert("RGB")
             if im.height > im.width * 0.8:  # 세로 사진(인물 등)은 목록 칸(3:2)에서 머리가 잘리지 않게 위쪽 기준으로 자른다
                 h = round(im.width * 2 / 3); top = min(round(im.height * 0.04), im.height - h)
+                if a.get("thumb_focus"):  # 카드뉴스처럼 제목이 아래에 있으면 front matter thumb_focus(0~1, 세로 위치)로 자르는 중심을 정한다
+                    top = max(0, min(round(im.height * float(a["thumb_focus"]) - h / 2), im.height - h))
                 im = im.crop((0, top, im.width, top + h))
             im.thumbnail((480, 480)); im.save(out, quality=80)
         a["thumb"] = "/static/thumb/" + out.name
