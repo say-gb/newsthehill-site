@@ -346,9 +346,16 @@ def home_selection(arts):
     subs = (flagged + songpa + [a for a in pics if a is not head and a not in flagged and a not in songpa])[:3]
     if len(subs) < 3: subs += [a for a in news if a is not head and a not in subs][:3 - len(subs)]
     used = {id(head)} | {id(a) for a in subs}
+    # 더바이어식 첫 화면(10/28): 헤드라인 옆 관련 기사 4줄, 3단(뉴스 목록 / 식품·유통 박스 / 사이드)
+    rel = [a for a in news if id(a) not in used][:4]
+    used_top = used | {id(a) for a in rel}
+    hlist = [a for a in news if id(a) not in used_top][:6]
+    food = [a for a in arts if a["section"] == "food"]
+    box_first = next((a for a in food if a.get("thumb") and id(a) not in used_top), food[0] if food else None)
+    box_others = [a for a in food if a is not box_first][:6]
     blocks = []
     for k, v in SECTIONS.items():
-        if k == "opinion": continue
+        if k in ("opinion", "food"): continue  # 식품·유통은 가운데 박스로(10/28)
         sa = [a for a in arts if a["section"] == k]
         if not sa:
             if k == "interview": blocks.append((k, v, None, []))
@@ -357,7 +364,7 @@ def home_selection(arts):
         others = [a for a in sa if a is not first][:3]
         blocks.append((k, v, first, others))
     colbox_main, colbox_others = colbox_pick(arts)
-    return dict(head=head, subs=subs, latest=arts[:8],
+    return dict(head=head, subs=subs, latest=arts[:8], rel=rel, hlist=hlist, box_first=box_first, box_others=box_others,
                 colbox_main=colbox_main, colbox_others=colbox_others, blocks=blocks,
                 rank_top=rank_pick(arts, n=10, skip=16), columnists_last=columnists_pick(arts),
                 photos=[a for a in news if a.get("thumb") and id(a) not in used][:4], more=arts[8:14])
@@ -379,18 +386,28 @@ def build():
     # ── 메인 (모바일 순서대로 마크업, PC는 CSS grid 8:4로 재배치)
     selected = home_selection(arts)
     head, subs = selected["head"], selected["subs"]
-    top = f"""<section class="h-top"><div class="lead"><a href="{head['url']}"><span class="lph"><img src="{head['photo']}" alt=""></span>
-<span class="kick">■ {secname(head)}</span><strong>{esc(head['title'])}</strong><p>{esc(head.get('subtitle') or head['excerpt'])}</p>{meta_line(head)}</a></div>
+    rel_html = "".join(f'<li><a href="{a["url"]}">{esc(a["title"])}</a></li>' for a in selected["rel"])
+    top = f"""<section class="h-top"><div class="lead2">
+<a class="lt" href="{head['url']}"><span class="kick">■ {secname(head)}</span><strong>{esc(head['title'])}</strong></a>
+<div class="lb"><a class="lph2" href="{head['url']}"><img src="{head['photo']}" alt=""></a>
+<div class="lr"><a class="lsub" href="{head['url']}">{esc(head.get('subtitle') or head['excerpt'])}</a>{meta_line(head)}<ul class="rel">{rel_html}</ul></div></div></div>
 <ul class="subs">{"".join(row(a, ex=False) for a in subs)}</ul></section>"""
     latest = f'<section class="h-latest">{boxh("최신기사", "/section/all/")}<ul class="tline">{"".join(timeline(a) for a in selected["latest"])}</ul></section>'
     blocks = ""
     for k, v, first, others in selected["blocks"]:
         lead = row(first) if first else f'<li class="empty"><span>{v} 기사를 준비하고 있습니다.</span></li>'
         blocks += f'<section class="sec">{boxh("■ " + v, f"/section/{k}/")}<ul class="first">{lead}</ul><ul class="tl">{"".join(tline(a) for a in others)}</ul></section>'
+    hlist = f'<section class="h-list">{boxh("뉴스", "/section/all/")}<ul class="hl">{"".join(row(a) for a in selected["hlist"])}</ul></section>'
+    bf, bo = selected["box_first"], selected["box_others"]
+    box = ""
+    if bf:
+        box = (f'<section class="h-box">{boxh("식품·유통", "/section/food/")}'
+               f'<a class="bxf" href="{bf["url"]}">{thumb(bf)}<strong>{esc(bf["title"])}</strong></a><ul class="bxl">'
+               + "".join(f'<li><a href="{a["url"]}">{thumb(a)}<span>{esc(a["title"])}</span></a></li>' for a in bo) + '</ul></section>')
     photos = selected["photos"]
     strip = f'<section class="h-photo">{boxh("포토뉴스")}<div>' + "".join(f'<a href="{a["url"]}">{thumb(a)}<span>{esc(a["title"])}</span></a>' for a in photos) + "</div></section>"
     more = f'<section class="h-more">{boxh("뉴스 더보기", "/section/all/")}<ul class="rows">{"".join(row(a) for a in selected["more"])}</ul></section>'
-    body = f'<div class="home">{top}{latest}{colbox(arts, picked=(selected["colbox_main"], selected["colbox_others"]))}<div class="h-secs">{blocks}</div><div class="h-side">{rank(arts, picked=selected["rank_top"])}{ADSLOT}{columnists(arts, picked=selected["columnists_last"])}</div>{strip}{more}</div>'
+    body = f'<div class="home home2">{top}{latest}{colbox(arts, picked=(selected["colbox_main"], selected["colbox_others"]))}{hlist}{box}<div class="h-secs">{blocks}</div><div class="h-side">{rank(arts, picked=selected["rank_top"])}{ADSLOT}{columnists(arts, picked=selected["columnists_last"])}</div>{strip}</div>'
     write("/", page("", body, arts=arts, keywords="뉴스더힐,식품,유통,전통시장,소상공인,칼럼"))
     # ── 섹션 (+ 전체기사)
     for k, v in list(SECTIONS.items()) + [("all", "전체기사")]:
