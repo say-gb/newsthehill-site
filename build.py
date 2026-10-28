@@ -334,14 +334,12 @@ def _songpa(a):
 
 def home_selection(arts):
     # 첫 화면 편집 규칙(교수님 10/28 "공신력 있는 송파 관장·병원장, 송파 소식이 먼저, 나는 아직 유명하지 않다"):
-    # 헤드라인 = headline: true(이틀 유효) → 없으면 최근 송파구 소식(사진 있는 것, 사흘 안) → 없으면 최신 사진 기사
+    # 헤드라인 = 제일 최신 사진 기사(home: false·칼럼 제외)
     # 아래 3칸 = sub: 1·2·3(숫자 순, 기한 없음, 직접 내릴 때까지) → 송파구 소식 → 최신 사진 기사
     # home: false = 헤드라인·아래 3칸·포토뉴스에서 뺌(교수님 본인 인터뷰·기고 등). 최신기사·섹션 목록에는 그대로.
     news = [a for a in arts if not a["column"] and not str(a.get("home", "")).lower() == "false"]
     pics = [a for a in news if a.get("thumb")]
-    head = next((a for a in pics if _flag(a, "headline") and _fresh(a)), None) \
-        or next((a for a in pics if _songpa(a) and _fresh(a, 3)), None) \
-        or (pics[0] if pics else arts[0])
+    head = pics[0] if pics else arts[0]  # 헤드라인 = 제일 최신 기사(교수님 10/28 15:15 지시)
     flagged = sorted([a for a in pics if a is not head and _flag(a, "sub")],
                      key=lambda a: int(a["sub"]) if str(a["sub"]).isdigit() else 9)
     songpa = [a for a in pics if a is not head and a not in flagged and _songpa(a) and _fresh(a, 3)]
