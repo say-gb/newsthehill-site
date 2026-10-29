@@ -1,0 +1,30 @@
+<!doctype html><meta charset="utf-8"><link rel="stylesheet" href="chart-base.css"><body>
+<div class="brand">NEWS THE HILL</div>
+<div class="hd"><p class="k"><i></i>송파 겨울나기 지도</p>
+<h1>달력으로 보는<br>올겨울 준비</h1>
+<p class="dek">오늘(10월 29일) 기준. 빨간 막대는 마감이 가장 빠른 것.</p></div>
+<svg class="chart" width="1200" height="440" id="c"></svg>
+<div class="foot"><span>자료: 질병관리청 · 서울시 · 송파구(한파대책은 지난겨울 기준)</span><span>그래픽=뉴스더힐</span></div>
+<script>
+const D=t=>new Date(t).getTime(), A=D('2026-09-01'), B=D('2027-07-01'), X0=400, X1=1050, x=t=>X0+(D(t)-A)/(B-A)*(X1-X0);
+const rows=[["독감 무료접종","어린이·임신부","2026-09-21","2027-04-30","~4.30","#2F5E35"],
+["독감 무료접종","65세 이상 · 나이별 10.6~10.15 시작","2026-10-06","2027-04-30","~4.30","#2F5E35"],
+["코로나19 접종","65세 이상","2026-10-12","2027-06-30","~6.30","#2F5E35"],
+["에너지바우처 신청","6월 15일부터 · 수급 가구","2026-09-01","2026-12-31","12.31 마감","#B5281F"],
+["에너지바우처 사용","7월 1일부터 · 여름·겨울 구분 없이","2026-09-01","2027-05-31","~5.31","#2F5E35"],
+["송파 한파대책","지난겨울 기준","2026-11-15","2027-03-15","11.15~3.15","dash"]];
+const s=document.getElementById('c'),rh=58,T0=62;let h='';
+const months=[["2026-09-01","9월"],["2026-10-01","10월"],["2026-11-01","11월"],["2026-12-01","12월"],["2027-01-01","1월"],["2027-02-01","2월"],["2027-03-01","3월"],["2027-04-01","4월"],["2027-05-01","5월"],["2027-06-01","6월"]];
+months.forEach(([t,l])=>{h+=`<text x="${x(t)+4}" y="${T0-34}" font-size="14" fill="#5d6656">${l}</text><line x1="${x(t)}" y1="${T0-48}" x2="${x(t)}" y2="${T0+rows.length*rh-26}" stroke="#1F211C" stroke-opacity=".08"/>`;});
+const today=x('2026-10-29');
+h+=`<line x1="${today}" y1="${T0-24}" x2="${today}" y2="${T0+rows.length*rh-26}" stroke="#1F211C" stroke-width="1.5" stroke-dasharray="3 4"/>`;
+h+=`<text x="${today}" y="${T0+rows.length*rh-6}" text-anchor="middle" font-size="15" font-weight="700" fill="#1F211C">오늘</text>`;
+rows.forEach(([n,u,a,b,lab,col],i)=>{const cy=T0+i*rh;
+ h+=`<text x="64" y="${cy+3}" font-size="22" font-weight="700" fill="#1F211C">${n}</text><text x="64" y="${cy+25}" font-size="15" fill="#5d6656">${u}</text>`;
+ if(col==='dash'){h+=`<rect x="${x(a)}" y="${cy-8}" width="${x(b)-x(a)}" height="16" rx="8" fill="none" stroke="#3d4437" stroke-width="2" stroke-dasharray="5 4"/>`;}
+ else{h+=`<rect x="${x(a)}" y="${cy-8}" width="${x(b)-x(a)}" height="16" rx="8" fill="${col}"/>`;}
+ const c=col==='dash'?'#3d4437':col;
+ h+=`<text x="1136" y="${cy+7}" text-anchor="end" font-size="${col==='#B5281F'?24:21}" font-weight="900" fill="${c}">${lab}</text>`;
+});
+s.innerHTML=h;
+</script></body>

@@ -1,0 +1,22 @@
+<!doctype html><meta charset="utf-8"><link rel="stylesheet" href="chart-base.css"><body>
+<div class="brand">NEWS THE HILL</div>
+<div class="hd"><p class="k"><i></i>송파 겨울나기 지도</p>
+<h1>독감, 아이들 사이에서<br>먼저 번졌다</h1>
+<p class="dek">연령별 외래환자 1,000명당 독감 의심환자(36주차, 8월 30일~9월 5일).<br>점선은 이번 절기 유행기준 12.9명. 9월 11일 유행주의보 발령.</p></div>
+<svg class="chart" width="1200" height="440" id="c"></svg>
+<div class="foot"><span>자료: 질병관리청 인플루엔자 표본감시(2026~2027절기 36주차)</span><span>그래픽=뉴스더힐</span></div>
+<script>
+const rows=[["7~12세",75.1],["1~6세",49.8],["13~18세",31.3],["전체",25.3],["0세",24.0],["19~49세",23.5],["50~64세",11.8],["65세 이상",8.8]];
+const s=document.getElementById('c'),X0=250,X1=900,x=v=>X0+v/80*(X1-X0),rh=44,T0=70,TH=12.9;let h='';
+h+=`<line x1="${x(TH)}" y1="${T0-16}" x2="${x(TH)}" y2="${T0+rows.length*rh-20}" stroke="#1F211C" stroke-width="1.5" stroke-dasharray="3 4"/>`;
+h+=`<text x="${x(TH)}" y="${T0+rows.length*rh}" text-anchor="middle" font-size="15" fill="#3d4437" font-weight="700">유행기준 12.9</text>`;
+rows.forEach(([n,v],i)=>{const cy=T0+i*rh, up=v>=TH, col=up?'#B5281F':'#2F5E35', all=n==='전체';
+ h+=`<text x="64" y="${cy+8}" font-size="23" font-weight="${all?900:700}" fill="${all?'#B5281F':'#1F211C'}">${n}</text>`;
+ h+=`<line x1="${X0}" y1="${cy}" x2="${X1}" y2="${cy}" stroke="#1F211C" stroke-opacity=".08" stroke-width="14" stroke-linecap="round"/>`;
+ h+=`<line x1="${X0}" y1="${cy}" x2="${x(v)}" y2="${cy}" stroke="${col}" stroke-opacity="${all?1:.92}" stroke-width="14" stroke-linecap="round"/>`;
+ h+=`<text x="${Math.max(x(v),x(TH))+16}" y="${cy+8}" font-size="24" font-weight="900" fill="${col}">${v.toFixed(1)}</text>`;
+});
+h+=`<text x="1136" y="${T0+2}" text-anchor="end" font-size="16" fill="#3d4437">1년 전 같은 주</text><text x="1136" y="${T0+34}" text-anchor="end" font-size="28" font-weight="900" fill="#2F5E35">전체 6.6</text>`;
+h+=`<text x="1136" y="${T0+3*rh+2}" text-anchor="end" font-size="16" fill="#3d4437">입원환자 중 65세 이상</text><text x="1136" y="${T0+3*rh+34}" text-anchor="end" font-size="28" font-weight="900" fill="#B5281F">60.0%</text>`;
+s.innerHTML=h;
+</script></body>

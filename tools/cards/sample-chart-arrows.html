@@ -1,0 +1,44 @@
+<!doctype html><meta charset="utf-8"><style>
+:root{--heart:#EDF0D6;--leaf:#2F5E35;--leaf2:#6E9B5A;--chili:#B5281F;--onggi:#5B3A26;--ink:#1F211C;--salt:#FBFAF4}
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1200px;height:750px;background:var(--heart);color:var(--ink);font-family:"Noto Sans CJK KR",sans-serif;position:relative;overflow:hidden}
+/* 배추잎 결: 오른쪽 위 은은한 잎맥 */
+.vein{position:absolute;right:-60px;top:-90px;width:360px;height:360px;opacity:.10}
+.hd{position:absolute;left:64px;top:52px;width:700px}
+.k{font-size:18px;font-weight:700;color:var(--leaf);display:flex;align-items:center;gap:10px}
+.k i{display:inline-block;width:26px;height:3px;background:var(--chili)}
+h1{margin-top:14px;font-family:"Noto Serif CJK KR",serif;font-weight:900;font-size:54px;line-height:1.16;letter-spacing:-2px}
+.dek{margin-top:12px;font-size:19px;line-height:1.5;color:#3d4437}
+.brand{position:absolute;right:64px;top:56px;font-family:"Noto Serif CJK KR",serif;font-weight:900;font-size:17px;letter-spacing:3px;color:var(--leaf)}
+svg.chart{position:absolute;left:0;top:250px}
+.foot{position:absolute;left:64px;right:64px;bottom:22px;font-size:14px;color:#5d6656;display:flex;justify-content:space-between}
+</style><body>
+<div class="brand">NEWS THE HILL</div>
+<div class="hd"><p class="k"><i></i>김장 물가 지도</p>
+<h1>배추는 내리고<br>새우젓은 뛰었다</h1>
+<p class="dek">1년 전 값을 100으로 놓고 오늘(10월 28일) 값을 그렸다. 전국 평균 소매가, 상품 기준.</p></div>
+<svg class="chart" width="1200" height="440" id="c"></svg>
+<div class="foot"><span>자료: aT 농산물유통정보(KAMIS). 1년 전 값은 5일 이동평균</span><span>그래픽=뉴스더힐</span></div>
+<script>
+const rows=[["새우젓","1kg",15093,21044],["깐마늘","국산 1kg",11391,12201],["미나리","100g",1737,1827],["멸치액젓","1kg",6020,6217],["고춧가루","국산 1kg",31122,31178],["무","1개",2210,2153],["생강","국산 1kg",12564,11375],["대파","1kg",3232,2741],["배추","1포기",5163,4322]];
+const s=document.getElementById('c'), X0=300, X1=1010, lo=75, hi=145, x=v=>X0+(v-lo)/(hi-lo)*(X1-X0), rh=41, T0=44;
+const won=n=>n.toLocaleString('ko-KR')+'원';
+let h='';
+// 축: 100 기준선
+h+=`<line x1="${x(100)}" y1="${T0-14}" x2="${x(100)}" y2="${T0+rows.length*rh-6}" stroke="#1F211C" stroke-width="1.5" stroke-dasharray="3 4"/>`;
+h+=`<text x="${x(100)}" y="${T0-20}" text-anchor="middle" font-size="15" fill="#3d4437" font-weight="700">1년 전 = 100</text>`;
+rows.forEach(([n,u,y,d],i)=>{const v=d/y*100, cy=T0+i*rh+14, up=v>=100, col=up?'#B5281F':'#2F5E35';
+ h+=`<text x="64" y="${cy+7}" font-size="23" font-weight="700" fill="#1F211C">${n}</text><text x="${64+n.length*23+8}" y="${cy+7}" font-size="15" fill="#5d6656">${u}</text>`;
+ h+=`<line x1="${X0}" y1="${cy}" x2="${X1}" y2="${cy}" stroke="#1F211C" stroke-opacity=".08" stroke-width="10" stroke-linecap="round"/>`;
+ const a=x(100), b=x(v), dir=up?1:-1, len=Math.abs(b-a);
+ if(len>14){h+=`<line x1="${a}" y1="${cy}" x2="${b-dir*12}" y2="${cy}" stroke="${col}" stroke-width="10" stroke-linecap="round"/>`;
+  h+=`<path d="M${b} ${cy} L${b-dir*16} ${cy-11} L${b-dir*16} ${cy+11} Z" fill="${col}"/>`;}
+ else {h+=`<circle cx="${b}" cy="${cy}" r="8" fill="${col}"/>`;}
+ const pct=(v-100); const lab=(pct>=0?'+':'−')+Math.abs(pct).toFixed(1)+'%';
+ const tx=up? Math.max(b,a)+22 : Math.min(b,a)-22;
+ h+=`<text x="${tx}" y="${cy+8}" text-anchor="${up?'start':'end'}" font-size="24" font-weight="900" fill="${col}">${lab}</text>`;
+ h+=`<text x="1136" y="${cy+6}" text-anchor="end" font-size="16" fill="#3d4437">${won(d)}</text>`;
+});
+h+=`<text x="1136" y="${T0-20}" text-anchor="end" font-size="15" fill="#3d4437" font-weight="700">오늘 값</text>`;
+s.innerHTML=h;
+</script></body>
