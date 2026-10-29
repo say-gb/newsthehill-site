@@ -1,0 +1,8 @@
+@font-face{font-family:"BHS";src:url(bhs.woff2) format("woff2")}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--g:#12402F;--iv:#F5F1E6;--gold:#B08A3E;--sal:#E57755;--ink:#1d2a24}
+body{width:1200px;height:675px;font-family:"Noto Sans CJK KR",sans-serif;position:relative;overflow:hidden}
+.brand{position:absolute;left:60px;top:44px;font-weight:900;font-size:22px;letter-spacing:.5px}
+.sec{position:absolute;right:60px;top:46px;font-family:"Noto Serif CJK KR",serif;font-weight:700;font-size:20px;color:var(--gold)}
+h1{font-family:"BHS";font-weight:400;line-height:1.12;letter-spacing:-1px}
+.foot{position:absolute;left:60px;right:60px;bottom:26px;display:flex;justify-content:space-between;font-family:"Noto Serif CJK KR",serif;font-size:15px}

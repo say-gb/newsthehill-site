@@ -27,7 +27,7 @@
 
 **3-A. Chrome이 될 때 (송파구 사진)**: `list_connected_browsers`로 연결된 크롬이 있으면 kj@abanable.com과 GitHub(say-gb)가 로그인된 **'직장' 프로필**을 고르고 아래 1~6을 따른다. Gmail 주소는 `https://mail.google.com/mail/?authuser=kj@abanable.com`(직장 프로필에서 보통 /u/0/), 해당 메일은 커넥터 결과의 viewUrl이나 검색으로 연다.
 
-**3-B. Chrome이 안 될 때**: 게시를 미루지 않는다. `scripts/make_infographic.py`로 대표 이미지를 만들어(일러스트 없이, docs/food-auto-publish.md 1절 3번 규칙) 게시하고, 캡션은 `*그래픽=뉴스더힐(자료: 송파구)*`. 메일에 사진 첨부가 있었으면 `docs/photo-pending.md`에 `- news-…: 메일 제목 / 첨부 사진 이름` 한 줄을 남겨 다음 회차(3-0)에서 송파구 사진으로 바꾼다. 보고에 "사진 교체 대기"라고 적는다.
+**3-B. Chrome이 안 될 때**: 게시를 미루지 않는다. docs/news-card-style.md 카드로 대표 이미지를 만들어 게시하고, 캡션은 `*그래픽=뉴스더힐(자료: 송파구)*`. 메일에 사진 첨부가 있었으면 `docs/photo-pending.md`에 `- news-…: 메일 제목 / 첨부 사진 이름` 한 줄을 남겨 다음 회차(3-0)에서 송파구 사진으로 바꾼다. 보고에 "사진 교체 대기"라고 적는다.
 
 **3-A 세부 방법 (브라우저 → GitHub 업로드 화면)**
 1. Gmail 탭에서 해당 메일을 연다(검색 결과 목록에서 클릭. Gmail은 한 페이지 앱이라 탭 안 이동은 클릭/`history.back()`으로).
