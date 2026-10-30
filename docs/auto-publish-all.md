@@ -5,7 +5,7 @@
 
 ## 0. 순서 (한 회차)
 1. 준비: 저장소 클론, `git fetch` 후 최신 redesign 기준으로 작업.
-2. **송파구** — docs/songpa-auto-publish.md 전체(메일 Gmail 커넥터, 사진 3-0·3-A·3-B, 라벨).
+2. **송파구** — docs/songpa-auto-publish.md 전체(메일 Gmail 커넥터 → **1-B 구청 누리집 보도자료·공지사항**, 사진 3-0·3-A·3-B, 라벨).
 3. **식품·유통** — docs/food-auto-publish.md + docs/canva-card.md (농식품부·식약처, 한 번에 최대 4건, 엠바고 확인).
 4. **경기도** — docs/gyeonggi-auto-publish.md + docs/canva-card.md (본청·공공기관·시군 게시판, 공공누리 1유형만, 성남·하남·구리·광주 제외, 한 번에 최대 5건).
 5. 세 출처에서 쓴 기사를 **한 번에 검증·빌드·배포**한다(docs/songpa-auto-publish.md 5~6절). 배포를 출처마다 따로 하지 않는다.
