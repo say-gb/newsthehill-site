@@ -21,3 +21,9 @@
 
 ## 2. 보고 (한국어 존댓말, "교수님" 호칭, 짧게)
 출처별로 한 줄씩: 게시한 기사 제목·이미지 종류(제공 사진/Canva 카드/자체 카드·사진 교체 대기), 건너뛴 것과 이유. 세 출처 모두 새 자료가 없으면 "새 보도자료 없음" 한 줄.
+
+## 3. 클라우드에서 출처 읽는 법 (2026-10-30 확인)
+- 허용 도메인(mafra.go.kr, mfds.go.kr, korea.kr, gnews.gg.go.kr)은 교수님이 10/30 claude.ai 설정에 추가했다.
+- 그래도 클라우드 `curl`로는 mafra.go.kr·mfds.go.kr·gnews.gg.go.kr 접속이 끊긴다(connection reset). **korea.kr은 된다.**
+- 식품·유통: 정책브리핑 목록 `https://www.korea.kr/briefing/pressReleaseList.do?pageIndex=N`(1~12쪽)에서 농식품부·식약처 글을 고르고, 글 페이지의 `/common/download.do?fileId=…&tblKey=GMN`로 PDF를 받아 `pdftotext -layout`으로 읽는다. 농식품부 사진 zip도 같은 방법으로 받는다. PDF 첫 줄 보도시점(엠바고) 확인.
+- 경기도: gnews는 WebFetch(web-fetch 에이전트)로만 읽힌다. 목록·상세가 SERVER_ERROR로 자주 실패하니 읽힌 글만 쓴다. 본문 이미지(.webp)는 클라우드에서 못 받으므로 자체 카드를 쓴다.
