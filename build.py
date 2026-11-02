@@ -473,6 +473,18 @@ def build():
     # sitemap
     urls = ["/", "/about/"] + [f"/section/{k}/" for k in list(SECTIONS) + ["all"]] + [a["url"] for a in arts]
     (DIST / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + "".join(f"<url><loc>{SITE}{u}</loc></url>" for u in urls) + "</urlset>", encoding="utf-8")
-    print(f"built {len(arts)} articles → {DIST}")
+    # 옛 사이트 주소(/Front/View?...NewsNo=…) → 새 기사 주소. GitHub Pages는 없는 주소에 404.html을 내보내므로 거기서 옮긴다.
+    live = {a["slug"] for a in arts}; oldmap = {}
+    for f in sorted((ROOT / "articles").glob("*.md")):
+        raw = f.read_text(encoding="utf-8")
+        sm = re.search(r"^slug:\s*(\S+)", raw, re.M); slug = sm.group(1) if sm else f.stem
+        if slug not in live: continue
+        for no in re.findall(r"Front/View\?[^\s>]*?NewsNo=(\d+)", raw): oldmap.setdefault(no, f"/articles/{slug}/")
+    (DIST / "404.html").write_text(f'''<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta name="viewport" content="width=device-width,initial-scale=1"><title>페이지를 찾을 수 없습니다 - {NAME}</title>
+<script>(function(){{var m={json.dumps(oldmap, separators=(",", ":"))};var p=location.pathname.toLowerCase();var n=(location.search.match(/[?&]newsno=(\\d+)/i)||[])[1];
+if(n&&m[n]){{location.replace(m[n]);return;}}if(p.indexOf("/front")===0){{location.replace("/");}}}})();</script>
+<style>body{{font-family:"Noto Sans KR",sans-serif;text-align:center;padding:80px 16px;color:#1F211C;background:#fff}}a{{color:#2F5E35}}</style></head>
+<body><h1>페이지를 찾을 수 없습니다</h1><p>주소가 바뀌었거나 삭제된 기사입니다.</p><p><a href="/">뉴스더힐 첫 화면으로 가기</a></p></body></html>''', encoding="utf-8")
+    print(f"built {len(arts)} articles → {DIST} (옛 주소 연결 {len(oldmap)}건)")
 
 if __name__ == "__main__": build()
