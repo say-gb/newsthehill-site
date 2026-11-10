@@ -4,11 +4,10 @@ subtitle: 먹어도 되는 흠을 손님이 믿게 만드는 일 — 김장철 �
 section: opinion
 kind: 칼럼
 author: 최경집
-date: 2026-11-10
+date: 2026-11-09
 slug: kj-cabbage-black-spots-explain
 column: true
 time: 09:00
-draft: true
 ---
 
 ![최경집 교수의 시선](/static/column-header-sisun.jpg)
