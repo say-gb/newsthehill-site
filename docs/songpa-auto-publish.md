@@ -32,7 +32,9 @@
 ## 3. 사진 가져오기
 작업 컨테이너는 Gmail 첨부를 직접 받을 수 없다. 순서대로 시도한다.
 
-**3-0. 먼저 밀린 사진 교체**: `docs/photo-pending.md`에 남은 기사가 있고 이번 회차에 Chrome이 되면, 새 기사보다 먼저 그 기사들의 인포그래픽을 송파구 사진으로 바꾼다. 바꿀 때는 새 파일 이름(`…-photo1.jpg`)을 쓰고(같은 이름 덮어쓰기는 휴대폰 캐시에 옛 그림이 남는다), 캡션을 `사진=송파구 제공`으로 고치고, 목록에서 지운다.
+**3-00. Gmail 커넥터로 첨부 받기 (2026-11-12 확인, 가장 먼저 시도)**: `download_gmail_attachment`(messageId, `get_message` PLAIN_TEXT가 준 attachmentId·filename)로 **일반 첨부 사진·포스터를 클라우드에서 바로 받을 수 있다.** 받은 파일은 tool-results 폴더에 저장되므로 거기서 가로 1200px(포스터 1000px) JPEG로 줄여 `static/img`에 넣는다. Chrome이 없어도 된다. 대용량 첨부(bigfile 링크)는 이 방법으로 안 되니 3-B로 간다.
+
+**3-0. 먼저 밀린 사진 교체**: `docs/photo-pending.md`에 남은 기사가 있고 이번 회차에 3-00(Gmail 첨부 받기)이나 Chrome이 되면, 새 기사보다 먼저 그 기사들의 인포그래픽을 송파구 사진으로 바꾼다. 바꿀 때는 새 파일 이름(`…-photo1.jpg`)을 쓰고(같은 이름 덮어쓰기는 휴대폰 캐시에 옛 그림이 남는다), 캡션을 `사진=송파구 제공`으로 고치고, 목록에서 지운다.
 
 **3-A. Chrome이 될 때 (송파구 사진)**: `list_connected_browsers`로 연결된 크롬이 있으면 kj@abanable.com과 GitHub(say-gb)가 로그인된 **'직장' 프로필**을 고르고 아래 1~6을 따른다. Gmail 주소는 `https://mail.google.com/mail/?authuser=kj@abanable.com`(직장 프로필에서 보통 /u/0/), 해당 메일은 커넥터 결과의 viewUrl이나 검색으로 연다.
 
