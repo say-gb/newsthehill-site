@@ -40,3 +40,13 @@ docs/songpa-auto-publish.md 5~6절과 같다(build.py, 화면 확인, redesign �
 ## 5. 최경집 교수 칼럼
 - 교수님 10/22 지시로 같은 폴더의 `최경집.png`(사이트의 `static/column-header-sisun.jpg`와 같은 그림)를 본문 맨 위에 넣는다: `![최경집 교수의 시선](/static/column-header-sisun.jpg)`.
 - 10/22 기준 공개된 최경집 칼럼 18편 모두 이 그림이 들어가 있다(옛 기사는 `static/old/kj-…-0.png`, 빠져 있던 4편은 이날 추가).
+
+## 6. 자동 게시에서 박현 칼럼 올리기 (2026-11-13 추가)
+교수님 11/13 "박현 칼럼 안올라갔는데" → 자동 게시 작업에 넣기로 함("응"). 통합 자동 게시(docs/auto-publish-all.md 4-B)가 회차마다 처리한다.
+- 찾기: Gmail 커넥터 `search_threads` `from:lnclaim@naver.com -label:뉴스더힐-처리 newer_than:14d`. 제목이 `[박현 손해사정사의 정당한 보험금 리포트]`로 시작하는 원고만 대상. 다른 메일(문의·수정 요청 등)은 게시하지 않고 보고한다.
+- 본문: `get_message`(기본 PLAIN_TEXT는 문장 사이 띄어쓰기가 빠지므로 `FULL_CONTENT`의 htmlBody로 문단·띄어쓰기를 확인). 원문 그대로 쓰고 문장을 고치지 않는다. 번호 목록의 굵은 소제목은 `## 1. …`로. 붙여 넣은 뒤 공백을 뺀 글자가 원문과 같은지 python으로 비교한다.
+- 메일 첫 줄의 제목은 본문에서 빼고 title로 쓴다. 이미 `articles/`에 같은 제목이 있으면 쓰지 않고 라벨만 붙인다.
+- 이미지: 메일에 원고용 사진 첨부가 있으면 `download_gmail_attachment`로 받아 1000px JPEG로 쓴다. 없으면 박현 대표 이미지(직전 박현 칼럼의 `static/img/hyun-…-photo1.jpg`와 같은 파일 = 드라이브 박현.png)를 `static/img/hyun-YYYYMMDD0000N-photo1.jpg`로 복사한다.
+- front matter는 3절 그대로(`author: 박현 손해사정사`, `section: opinion`, `kind: 칼럼`, `column: true`, slug `hyun-YYYYMMDD0000N`, time은 게시 시각). 출처 문장·편집국 명의 넣지 않는다.
+- 수치·약관·법 조항은 확인하되 본문은 고치지 않는다. 틀려 보이는 곳은 게시하되 보고에 [확인 필요]로 적는다. 명예훼손·특정 보험사 실명 비방 등 판단이 서지 않으면 `draft: true`로 두고 보고.
+- 처리 후 메일에 Label_14('뉴스더힐-처리').
