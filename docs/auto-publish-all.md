@@ -7,9 +7,9 @@
 1. 준비: 저장소 클론, `git fetch` 후 최신 redesign 기준으로 작업.
 2. **송파구** — docs/songpa-auto-publish.md 전체(메일 Gmail 커넥터 → **1-B 구청 누리집 보도자료·공지사항**, 사진 3-0·3-A·3-B, 라벨).
 3. **식품·유통** — docs/food-auto-publish.md + docs/canva-card.md (농식품부·식약처, 한 번에 최대 4건, 엠바고 확인).
-4. **경기도** — docs/gyeonggi-auto-publish.md + docs/canva-card.md (본청·공공기관·시군 게시판, 공공누리 1유형만, 성남·하남·구리·광주 제외, 한 번에 최대 5건).
+4. ~~경기도~~ — **2026-11-15 교수님 "경기도껀 보지말자"로 중단.** 경기도뉴스포털은 보지 않고 보고에도 적지 않는다. 다시 하라는 지시가 있을 때만 docs/gyeonggi-auto-publish.md를 따른다.
 4-B. **칼럼니스트 원고(박현·단지팀장)** — docs/column-publish.md 6절(Gmail `(from:lnclaim@naver.com OR from:taki102@naver.com) -label:뉴스더힐-처리 newer_than:14d`, 원고 그대로, 필자 대표 이미지). 교수님 11/13 "박현 칼럼 안올라갔는데" → "응", "단지팀장것도 있자나".
-5. 세 출처와 칼럼에서 쓴 글을 **한 번에 검증·빌드·배포**한다(docs/songpa-auto-publish.md 5~6절). 배포를 출처마다 따로 하지 않는다.
+5. 송파구·식품·유통·칼럼에서 쓴 글을 **한 번에 검증·빌드·배포**한다(docs/songpa-auto-publish.md 5~6절). 배포를 출처마다 따로 하지 않는다.
 6. 송파구·칼럼 메일 라벨(Label_14 '뉴스더힐-처리') 붙이기, 브라우저 탭 닫기, 보고.
 
 ## 1. 공통 규칙
