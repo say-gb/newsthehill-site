@@ -7,8 +7,7 @@ author: 최경집
 date: 2026-11-17
 slug: kj-grape-sell-wider
 column: true
-time: 09:00
-draft: true
+time: 16:12
 ---
 
 ![최경집 교수의 시선](/static/column-header-sisun.jpg)
