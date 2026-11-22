@@ -285,7 +285,7 @@ def colbox(arts, *, picked=None):  # 칼럼니스트 아이보리 박스(최신 
     c, others = colbox_pick(arts) if picked is None else picked
     if not c: return ""
     name, series, author, ph = next(x for x in COLUMNISTS if x[2] == c["author"])
-    first = re.sub(r"<[^>]+>", "", c["html"]).strip().split("\n")[0][:120]
+    first = html.unescape(re.sub(r"<[^>]+>", "", c["html"])).strip().split("\n")[0][:120]
     byline = COLBOX_BYLINE.get(author, author)
     def who(a):
         return {"단지팀장(백효연)": "단지팀장", "박현 손해사정사": "박현"}.get(a["author"], a["author"])
