@@ -2,7 +2,7 @@
 """뉴스더힐 정적 사이트 생성기.
 사용: python3 build.py  → dist/ 생성 (newsthehill.com 루트용, CNAME 포함)
 미리보기: BASE_PATH=/newsthehill-site/ OUT_DIR=../upload python3 build.py  (하위경로, CNAME 제외)"""
-import re, html, shutil, json
+import re, html, shutil, json, sys
 from pathlib import Path
 from datetime import datetime
 from email.utils import format_datetime
@@ -313,6 +313,9 @@ def make_thumbs(arts):
         a["photo"] = src
         if Image is None: a["thumb"] = src; continue
         p = ROOT / src.lstrip("/"); out = tdir / (Path(src).stem + ".jpg")
+        if not out.exists() and not p.exists():  # 그림 파일이 빠진 기사 하나 때문에 전체 빌드가 멈추지 않게: 경고만 하고 썸네일 없이 넘어간다
+            print(f"[경고] 그림 파일 없음, 썸네일 생략: {src} ({a.get('slug', '?')})", file=sys.stderr)
+            a.pop("photo", None); continue
         if not out.exists():
             im = Image.open(p).convert("RGB")
             if im.height > im.width * 0.8:  # 세로 사진(인물 등)은 목록 칸(3:2)에서 머리가 잘리지 않게 위쪽 기준으로 자른다
